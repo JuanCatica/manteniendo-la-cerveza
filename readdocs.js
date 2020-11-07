@@ -207,7 +207,7 @@ $(document).ready(function(){
 
             // ------------------------------
             // ADDING THE GENERAR SVG
-            var svg = d3.select("#generalviz")
+            var svg = d3.select("#heatMap")
                 .append("svg")
                 .attr("width", hmSize.w + hmMargin.left + hmMargin.right)
                 .attr("height", hmSize.h + hmMargin.top + hmMargin.bottom)
