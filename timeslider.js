@@ -1,21 +1,39 @@
-class TimeSelector {
+class TimeSlider {
     //https://observablehq.com/@bumbeishvili/data-driven-range-sliders#barRangeSlider
     //https://observablehq.com/d/c55a5839a5bb7c73
+    
     constructor(DOMElement, width, height, margins) {
         this.DOMElement = DOMElement;
+        this.upperData = null;
+        this.lowerData = null;
         this.width = width;
         this.height = height;
         this.margins = margins;
     }
 
-    draw(data_time, data_cost) {
+    reSize(width, height, margins){
+        if (width!= null) this.width = width;
+        if (height!= null) this.height = height;
+        if (margins!= null) this.margins = margins;
+        this.draw();
+    }
+
+    setData(upperData, lowerData){
+        this.upperData = upperData;
+        this.lowerData = lowerData;
+        this.draw();
+    }
+
+    draw() {
+        let data_time = this.upperData;
+        let data_cost = this.lowerData
         let w = this.width - (this.margins.left + this.margins.right)
         let h = this.height - (this.margins.top + this.margins.bottom)
         let tParser = d3.timeParse("%Y-%m-%d %H:%M:%S");
         
         data_time = d3.nest()
             .key(function(d) { return d.fecha;})
-            .rollup(function(d) { return d3.sum(d, function(g) {return g.trabajo_real; }); })
+            .rollup(function(d) { return d3.sum(d, function(g) {return g["trabajo_real"]; }); })
             .entries(data_time);
         data_time.forEach(function(d) { d.key = tParser(d.key);});
         data_cost = d3.nest()
@@ -77,12 +95,13 @@ class TimeSelector {
                 .on("brush", brush)
             );
 
-        function brush(event, d) {
+        function brush() {
             if (d3.event.sourceEvent.type === "brush") return;
             console.log('brushed x:',xb.invert(d3.event.selection[0]), "  y:",xb.invert(d3.event.selection[1]))
             d3.select(".selection")	
-                .style("opacity", 0.8)
-                .style("fill", "#69b3a2")
+                .style("opacity", 0.5 )
+                .style("fill", "black")
+                .style("border", "black") //
         }
     }
 }

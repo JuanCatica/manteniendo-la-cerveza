@@ -19,20 +19,34 @@
     
     <!-- <script src="heatmap.js"></script>-->
     <!-- <script src="readdocs.js"></script>-->
-    <script src="timeselector.js"></script>
+    <script src="timeslider.js"></script>
     <script>
+
+        dataTime = null;
+        dataCost = null;
+        timeS = null;
+
         $(document).ready(function(){   
             var margins = {top:10,right:20,bottom:50,left:20}
-            var timeS = new TimeSelector("#sliderTimeFilter", window.innerWidth, 150, margins);
-
+            timeS = new TimeSlider("#sliderTimeFilter", window.innerWidth, 150, margins);
+            
             d3.queue()
                 .defer(d3.json, "dbprocessed/times.json")
                 .defer(d3.json, "dbprocessed/costs.json")
                 .await(function(error, data_time, data_cost) {
                     if (error) throw error;
-                    timeS.draw(data_time, data_cost);
+                    dataTime = data_time;
+                    dataCost = data_cost;
+                    timeS.setData(dataTime, dataCost);
                 });
         });
+
+        $(window).resize(function(){
+            //timeS.reSize(window.innerWidth, null, null);
+        });
+
+
+
     </script>
 </body>
 </html>
