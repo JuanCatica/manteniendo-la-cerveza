@@ -1,7 +1,7 @@
 class TimeSlider {
     //https://observablehq.com/@bumbeishvili/data-driven-range-sliders#barRangeSlider
     //https://observablehq.com/d/c55a5839a5bb7c73
-    
+    //https://stackoverflow.com/questions/9671995/javascript-custom-event-listener
     constructor(DOMElement, width, height, margins) {
         this.DOMElement = DOMElement;
         this.upperData = null;
@@ -68,7 +68,7 @@ class TimeSlider {
             .attr("width", this.w/(this.upperData.length ))
             .attr("height", (d) => yu(d.value))
             .style("opacity", 0.8)
-            .style("fill", "salmon")
+            .style("fill", "#39789c")//salmon
             .exit().remove();
 
         this.svgBar.call(
@@ -80,12 +80,26 @@ class TimeSlider {
         );
         function brush() {
             if (d3.event.sourceEvent.type === "brush") return;
-            console.log('brushed x:',xb.invert(d3.event.selection[0]), "  y:",xb.invert(d3.event.selection[1]))
+            //console.log('brushed x:',xb.invert(d3.event.selection[0]), "  y:",xb.invert(d3.event.selection[1]))
             d3.select(".selection")	
                 .style("opacity", 0.5 )
                 .style("fill", "black")
                 .style("border", "black")
                 .attr("border-radius", "5px");
+
+            d3.selectAll(".upper-rect")
+                .style("fill", "#69b3a2")
+                .filter(d => {
+                    return d.key >= xb.invert(d3.event.selection[0]) && d.key <= xb.invert(d3.event.selection[1]);
+                })
+                .style('fill', 'salmon');
+
+            d3.selectAll(".lower-rect")
+                .style("fill", "#39789c")
+                .filter(d => {
+                    return d.key >= xb.invert(d3.event.selection[0]) && d.key <= xb.invert(d3.event.selection[1]);
+                })
+                .style('fill', 'red');
         }
     }
 }
