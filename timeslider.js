@@ -11,97 +11,81 @@ class TimeSlider {
         this.margins = margins;
     }
 
-    reSize(width, height, margins){
-        if (width!= null) this.width = width;
-        if (height!= null) this.height = height;
-        if (margins!= null) this.margins = margins;
-        this.draw();
-    }
-
-    setData(upperData, lowerData){
+    setData(upperData, lowerData, minTime, maxTime){
         this.upperData = upperData;
         this.lowerData = lowerData;
-        this.draw();
+        this.maxTime = maxTime;
+        this.minTime = minTime;
     }
 
-    draw() {
-        let data_time = this.upperData;
-        let data_cost = this.lowerData
-        let w = this.width - (this.margins.left + this.margins.right)
-        let h = this.height - (this.margins.top + this.margins.bottom)
-        let tParser = d3.timeParse("%Y-%m-%d %H:%M:%S");
-        
-        data_time = d3.nest()
-            .key(function(d) { return d.fecha;})
-            .rollup(function(d) { return d3.sum(d, function(g) {return g["trabajo_real"]; }); })
-            .entries(data_time);
-        data_time.forEach(function(d) { d.key = tParser(d.key);});
-        data_cost = d3.nest()
-            .key(function(d) { return d.fecha;})
-            .rollup(function(d) { return d3.sum(d, function(g) {return g.costo_total; }); })
-            .entries(data_cost);
-        data_cost.forEach(function(d) { d.key = tParser(d.key);});
-
-        data_time.sort(function(a,b){return new Date(b.fecha) - new Date(a.fecha);});
-        data_cost.sort(function(a,b){return new Date(b.fecha) - new Date(a.fecha);});
-        var max = data_time[data_time.length - 1].key
-        var min = data_time[0].key
-
-        var xb = d3.scaleTime()
-            .range([0, w])
-            .domain([min,max]);
-        var yt = d3.scaleLinear()
-            .range([h/2, 0])
-            .domain([d3.min(data_time, d => d.value), d3.max(data_time, d => d.value)]);
-        var yc = d3.scaleLinear()
-            .range([h/2, 0])
-            .domain([d3.min(data_cost, d => d.value), d3.max(data_cost, d => d.value)]);  
-            
-        var svgBar = d3.select(this.DOMElement)
+    draw(){
+        this.w = this.width - (this.margins.left + this.margins.right);
+        this.h = this.height - (this.margins.top + this.margins.bottom);
+        this.svgBar = d3.select(this.DOMElement)
             .append("svg")
-            .attr("width", this.width) //+ this.margins.left + this.margins.right
-            .attr("height", this.height) //+ this.margins.top + this.margins.bottom
+            .attr("width", this.width)
+            .attr("height", this.height)
             .append("g")
             .attr("transform","translate(" + this.margins.left + "," + this.margins.top + ")")
-            .attr("class", "brush")
-        svgBar.append("g")
-            .attr("transform", "translate(0," + h + ")")
-            .call(d3.axisBottom(xb))
-        svgBar.selectAll()
-            .data(data_time)
-            .enter()
+        this.gAxix = this.svgBar.append("g")
+            .attr("transform", "translate(0," + this.h + ")");
+        this.update();
+    }
+
+    update(){   
+        var xb = d3.scaleTime()
+            .range([0, this.w])
+            .domain([this.minTime,this.maxTime]);
+        var yu = d3.scaleLinear()
+            .range([this.h/2, 0])
+            .domain([d3.min(this.upperData, d => d.value), d3.max(this.upperData, d => d.value)]);
+        var yl = d3.scaleLinear()
+            .range([this.h/2, 0])
+            .domain([d3.min(this.lowerData, d => d.value), d3.max(this.lowerData, d => d.value)]);
+        this.gAxix.call(d3.axisBottom(xb));
+        
+        var upDateLowBar = this.svgBar.selectAll(".upper-rect")
+            .data(this.lowerData)
+        upDateLowBar.enter()
             .append("rect")
-            .attr("x", function(d) {return xb(d.key); })
-            .attr("y", h/2)
-            .attr("width", w/(data_time.length ))
-            .attr("height", function(d) { return yt(d.value); } )
+            .attr("class","upper-rect")
+            .merge(upDateLowBar)
+            .attr("x", (d) => xb(d.key))
+            .attr("y", (d) => this.h/2 - yl(d.value))
+            .attr("width", this.w/(this.lowerData.length ))
+            .attr("height",(d) => yl(d.value))
             .style("opacity", 0.8)
-            .style("fill", "salmon");
-        svgBar.selectAll()
-            .data(data_cost)
-            .enter()
+            .style("fill", "#69b3a2")
+            .exit().remove();
+        var upDateUpBar = this.svgBar.selectAll(".lower-rect")
+            .data(this.upperData)
+        upDateUpBar.enter()
             .append("rect")
-            .attr("x", function(d) { return xb(d.key); })
-            .attr("y", function(d) { return h/2 - yc(d.value); })
-            .attr("width", w/(data_cost.length ))
-            .attr("height", function(d) { return yc(d.value); })
+            .attr("class","lower-rect")
+            .merge(upDateUpBar)
+            .attr("x", (d) => xb(d.key))
+            .attr("y", this.h/2)
+            .attr("width", this.w/(this.upperData.length ))
+            .attr("height", (d) => yu(d.value))
             .style("opacity", 0.8)
-            .style("fill", "#69b3a2");   
-        svgBar.call(
+            .style("fill", "salmon")
+            .exit().remove();
+
+        this.svgBar.call(
             d3.brushX()
-                .extent([[0, 0], [w, h]])
+                .extent([[0, 0], [this.w, this.h]])
                 .on("start", console.log("start:", new Date()))
                 .on("end", console.log("end"))
                 .on("brush", brush)
-            );
-
+        );
         function brush() {
             if (d3.event.sourceEvent.type === "brush") return;
             console.log('brushed x:',xb.invert(d3.event.selection[0]), "  y:",xb.invert(d3.event.selection[1]))
             d3.select(".selection")	
                 .style("opacity", 0.5 )
                 .style("fill", "black")
-                .style("border", "black") //
+                .style("border", "black")
+                .attr("border-radius", "5px");
         }
     }
 }

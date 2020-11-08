@@ -1,52 +1,150 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>HeatMap</title>
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>HeatMap</title>
+        
+        <script src="https://code.jquery.com/jquery-3.5.1.min.js" integrity="sha256-9/aliU8dGd2tb6OSsuzixeV4y/faTqgFtohetphbbj0=" crossorigin="anonymous"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.21.0/moment.min.js" type="text/javascript"></script>
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css">
+        <link href="static/css/clean-blog.min.css" rel="stylesheet">
+        <link href="static/vendor/font-awesome/css/font-awesome.min.css" rel="stylesheet" type="text/css"> 
+        <script src="static/js/bootstrap-datetimepicker.min.js"></script>
+        <link rel="stylesheet" href="static/css/bootstrap-datetimepicker.min.css">
+        <link href='https://fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic' rel='stylesheet' type='text/css'>
+        <link href='https://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800' rel='stylesheet' type='text/css'> 
+        
+        <!-- Load d3.js -->
+        <script src="https://d3js.org/d3.v4.js"></script>
+    </head>
+    <body>
+        <div class="container-fluid h-100 pl-0 pr-0 text-white">
+            <nav class="navbar navbar-expand-lg navbar-light"><!--bar navbar-expand-sm bg-light-->
+                <!--<div class="container">-->
+                <div class="container-fluid">
+                    <a class="navbar-brand text-white" href="">Manteniendo la Cerveza</a>
+                    <ul class="nav">
+                        <li class="nav-item">
+                            <form method="get" action="">
+                                <button type="submit" data-toggle="tooltip" data-placement="bottom" title=""  style="background-color:transparent; border-color:transparent;"> 
+                                    <small class="text-white">Historia</small>
+                                </button>
+                            </form>
+                        </li>
+                    </ul>
+                </div>
+            </nav>
+            <div class="row container-fluid pl-0 pr-0 h-100">
+                <div class="col-2">
+                    <div class="input-group text-center">
+                        <button id="update-button" class="bg-success form-control m-1 text-white" data-toggle="modal" data-target="#editModal">Time</button>
+                    </div>
 
-    <script src="https://code.jquery.com/jquery-3.5.1.min.js" integrity="sha256-9/aliU8dGd2tb6OSsuzixeV4y/faTqgFtohetphbbj0=" crossorigin="anonymous"></script>
-    <!-- Load d3.js -->
-    <script src="https://d3js.org/d3.v4.js"></script>
-    
-</head>
-<body>
-    <div id="sliderTimeFilter"></div>
-    <div id="heatMap"></div>
-    <div id="timehcartCost"></div>
-    <div id="spyderCost"></div>
-    <div id="spyderTime"></div>
-    
-    <!-- <script src="heatmap.js"></script>-->
-    <!-- <script src="readdocs.js"></script>-->
-    <script src="timeslider.js"></script>
-    <script>
+                    <div class="hr"><hr></div>
+                    
+                    <div class="input-group text-center">
+                        <button id="update-button" class="bg-info form-control m-2 text-white" onClick="doUpdateViz()">Planta A</button>
+                    </div>
+                    <div class="input-group text-center">
+                        <button id="update-button" class="bg-info form-control m-2 text-white" onClick="doUpdateViz()">Planta B</button>
+                    </div>
+                    <div class="input-group text-center">
+                        <button id="update-button" class="bg-info form-control m-2 text-white" onClick="doUpdateViz()">Planta C</button>
+                    </div>
+                    <div class="input-group text-center">
+                        <button id="update-button" class="bg-info form-control m-2 text-white" onClick="doUpdateViz()">Planta D</button>
+                    </div>
+                    <div class="input-group text-center">
+                        <button id="update-button" class="bg-info form-control m-2 text-white" onClick="doUpdateViz()">Planta E</button>
+                    </div>
+                    
+                    <div class="hr"><hr></div>
 
-        dataTime = null;
-        dataCost = null;
-        timeS = null;
+                    <div class="input-group text-center">
+                        <button id="update-button" class="bg-info form-control m-2 text-white" onClick="doUpdateViz()">AREA 1</button>
+                    </div>
+                    <div class="input-group text-center">
+                        <button id="update-button" class="bg-info form-control m-2 text-white" onClick="doUpdateViz()">AREA 2</button>
+                    </div>
+                    <div class="input-group text-center">
+                        <button id="update-button" class="bg-info form-control m-2 text-white" onClick="doUpdateViz()">AREA 3</button>
+                    </div>
+                    <div class="input-group text-center">
+                        <button id="update-button" class="bg-info form-control m-2 text-white" onClick="doUpdateViz()">AREA 4</button>
+                    </div>
+                    <div class="input-group text-center">
+                        <button id="update-button" class="bg-info form-control m-2 text-white" onClick="doUpdateViz()">AREA 5</button>
+                    </div>
+                </div>
+                <div class="col-10" >
+                    <div id="sliderTimeFilter"></div>
+                    <div></div>
+                </div>
+            </div>
+        </div> 
 
-        $(document).ready(function(){   
-            var margins = {top:10,right:20,bottom:50,left:20}
-            timeS = new TimeSlider("#sliderTimeFilter", window.innerWidth, 150, margins);
-            
-            d3.queue()
-                .defer(d3.json, "dbprocessed/times.json")
-                .defer(d3.json, "dbprocessed/costs.json")
-                .await(function(error, data_time, data_cost) {
-                    if (error) throw error;
-                    dataTime = data_time;
-                    dataCost = data_cost;
-                    timeS.setData(dataTime, dataCost);
+        <!--Modal para la definición del rango de tiempo-->
+        <div class="modal fade " id="editModal" tabindex="1" role="dialog" aria-labelledby="editModal" aria-hidden="true">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="editModal">Rango de Tiempo</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="input-group mb-1">
+                            <div style="width:20%" class="input-group-prepend"><span style="width:100%" class="input-group-text" id="inputGroup-sizing-default">Inicio</span></div>
+                            <input type='text' name="start_date" class="form-control"   id='datetimepicker1'  required>
+                        </div>
+                        <div class="input-group mb-1">
+                            <div style="width:20%" class="input-group-prepend"><span style="width:100%" class="input-group-text" id="inputGroup-sizing-default">Fin</span></div>
+                            <input type='text' name="end_date"  class="form-control"   id='datetimepicker2'  required>
+                        </div>
+
+                        <div class="modal-footer">
+                            <button type="submit" class="btn btn-secondary" data-toggle="modal" data-dismiss="modal" data-target="#deleteModal" data-whatever="@getbootstrap">Cancelar</button>
+                            <form action="" target="_blank">
+                                <input type="hidden" name="id_contest" value="">
+                                <button type="submit" class="btn btn-success">Listo</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <script type="text/javascript">
+            $(function () {
+                $('#datetimepicker1').datetimepicker({
+                    format: 'YYYY-MM-DD',
                 });
-        });
-
-        $(window).resize(function(){
-            //timeS.reSize(window.innerWidth, null, null);
-        });
-
-
-
-    </script>
-</body>
+            });
+        </script>
+        <script type="text/javascript">
+            $(function () {
+                $('#datetimepicker2').datetimepicker({
+                    format: 'YYYY-MM-DD',
+                });
+            });
+        </script>
+        <script src="timeslider.js"></script>
+        <script src="beer.js"></script>
+        <style>
+            .navbar {
+                background-color: #39789c;
+            }
+            .hr {
+                border: 1px solid green;
+                //border-radius: 5px;
+                padding: 0px;
+                margin: 4px; 
+                height:0px  
+            }
+        </style>
+    </body>
 </html>
