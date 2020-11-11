@@ -2,7 +2,7 @@ const MongoLib = require('../lib/mongo')
 
 class TimeService {
   constructor() {
-    this.collection = 'time'
+    this.collection = 'times'
     this.mongoDB = new MongoLib()
   }
   

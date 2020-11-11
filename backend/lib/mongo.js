@@ -9,8 +9,8 @@ const BD_NAME = config.dbName;
 
 // Url conecci'on db
 //const MONGO_URI = `mongodb+srv://${DB_USER}:${DB_PASSWD}@${BD_HOST}/${BD_NAME}?retryWrites=true&w=majority`;
-const MONGO_URI = `mongodb://${DB_USER}:${DB_PASSWD}@cluster0-shard-00-00.m7wl6.mongodb.net:27017,cluster0-shard-00-01.m7wl6.mongodb.net:27017,cluster0-shard-00-02.m7wl6.mongodb.net:27017/${BD_NAME}?ssl=true&replicaSet=atlas-8uq28c-shard-0&authSource=admin&retryWrites=true&w=majority`
-
+//const MONGO_URI = `mongodb://${DB_USER}:${DB_PASSWD}@cluster0-shard-00-00.m7wl6.mongodb.net:27017,cluster0-shard-00-01.m7wl6.mongodb.net:27017,cluster0-shard-00-02.m7wl6.mongodb.net:27017/${BD_NAME}?ssl=true&replicaSet=atlas-8uq28c-shard-0&authSource=admin&retryWrites=true&w=majority`
+const MONGO_URI = `mongodb://${DB_USER}:${DB_PASSWD}@beerdata-shard-00-00.wyaox.mongodb.net:27017,beerdata-shard-00-01.wyaox.mongodb.net:27017,beerdata-shard-00-02.wyaox.mongodb.net:27017/${BD_NAME}?ssl=true&replicaSet=atlas-qvbav8-shard-0&authSource=admin&retryWrites=true&w=majority`
 /* Clase para realizar la conección con la db y operaciones basicas con esta */
 class MongoLib {
   // Se inicializan los parametros base de la db
@@ -56,7 +56,7 @@ class MongoLib {
   /* Metodo que trae un objeto de la bd segun el typeNotice y la coleccion */
   getByTypeNotice(collection, typeNotice){
     return this.connect().then((db) => {
-      return db.collection(collection).findOne({ typeNotice:  typeNotice});
+      return db.collection(collection).find({ tipo_aviso:  typeNotice}).toArray();
     });
   }
 
@@ -64,7 +64,7 @@ class MongoLib {
   /* Metodo que trae un objeto de la bd segun el MachineId y la coleccion */
   getByMachineId(collection, machineId){
     return this.connect().then((db) => {
-      return db.collection(collection).findOne({ machineId:  machineId});
+      return db.collection(collection).find({ id_equipo:  machineId}).toArray();
     });
   }
 

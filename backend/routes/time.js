@@ -22,7 +22,7 @@ function timeApi(app) {
   router.get('/:typeNotice', async function (req, res, next) {
     const { typeNotice } = req.params;
     try {
-      const times = await risksService.getTime({ typeNotice });
+      const times = await timeService.getTime({ typeNotice });
       res.status(200).json({
         data: times,
         message: 'times retrieved',
