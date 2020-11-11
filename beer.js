@@ -3,7 +3,7 @@ dataCost = null;
 timeS = null;
 
 $(document).ready(function(){   
-    var margins = {top:10,right:10,bottom:50,left:10}
+    var margins = {top:25,right:10,bottom:50,left:10}
     var w = document.getElementById('sliderTimeFilter').clientWidth;
     console.log(w)
     timeS = new TimeSlider("#sliderTimeFilter", w, 150, margins);
@@ -39,8 +39,12 @@ $(document).ready(function(){
             timeS.draw();
         });
 
-
+    document.addEventListener("cat",function(e) {
+        //console.log(e.detail)
+    },false);
 });
+
+
 
 $(window).resize(function(){
     //timeS.reSize(window.innerWidth, null, null);

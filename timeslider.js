@@ -2,6 +2,8 @@ class TimeSlider {
     //https://observablehq.com/@bumbeishvili/data-driven-range-sliders#barRangeSlider
     //https://observablehq.com/d/c55a5839a5bb7c73
     //https://stackoverflow.com/questions/9671995/javascript-custom-event-listener
+    //https://www.d3-graph-gallery.com/graph/interactivity_brush.html
+
     constructor(DOMElement, width, height, margins) {
         this.DOMElement = DOMElement;
         this.upperData = null;
@@ -14,8 +16,10 @@ class TimeSlider {
     setData(upperData, lowerData, minTime, maxTime){
         this.upperData = upperData;
         this.lowerData = lowerData;
-        this.maxTime = maxTime;
-        this.minTime = minTime;
+        this.maxTime = new Date(maxTime);
+        this.minTime = new Date(minTime);
+        this.maxTime.setDate(this.maxTime.getDate() + 7);
+        this.maxLength = Math.max(this.upperData.length, this.lowerData.length)
     }
 
     draw(){
@@ -23,16 +27,24 @@ class TimeSlider {
         this.h = this.height - (this.margins.top + this.margins.bottom);
         this.svgBar = d3.select(this.DOMElement)
             .append("svg")
+            .attr("class", "svgbar")
             .attr("width", this.width)
             .attr("height", this.height)
             .append("g")
             .attr("transform","translate(" + this.margins.left + "," + this.margins.top + ")")
         this.gAxix = this.svgBar.append("g")
-            .attr("transform", "translate(0," + this.h + ")");
+            //.attr("transform", "translate(0," + this.h + ")");
         this.update();
     }
 
     update(){   
+        let h = this.h 
+        let w = this.w 
+        let window = w/this.maxLength;
+
+        let startDate = null;
+        let endDate = null;
+
         var xb = d3.scaleTime()
             .range([0, this.w])
             .domain([this.minTime,this.maxTime]);
@@ -42,7 +54,7 @@ class TimeSlider {
         var yl = d3.scaleLinear()
             .range([this.h/2, 0])
             .domain([d3.min(this.lowerData, d => d.value), d3.max(this.lowerData, d => d.value)]);
-        this.gAxix.call(d3.axisBottom(xb));
+        this.gAxix.call(d3.axisTop(xb));
         
         var upDateLowBar = this.svgBar.selectAll(".upper-rect")
             .data(this.lowerData)
@@ -55,7 +67,8 @@ class TimeSlider {
             .attr("width", this.w/(this.lowerData.length ))
             .attr("height",(d) => yl(d.value))
             .style("opacity", 0.8)
-            .style("fill", "#69b3a2")
+            .style("fill", "#9ccdc1")
+            //.style('stroke',"#9ccdc1") // #69b3a2
             .exit().remove();
         var upDateUpBar = this.svgBar.selectAll(".lower-rect")
             .data(this.upperData)
@@ -68,38 +81,165 @@ class TimeSlider {
             .attr("width", this.w/(this.upperData.length ))
             .attr("height", (d) => yu(d.value))
             .style("opacity", 0.8)
-            .style("fill", "#39789c")//salmon
+            .style("fill", "#74a0b9")//salmon #39789c
             .exit().remove();
+        
+        /* BRUSH ELEMENTS */
+        this.svgBar.append("rect")
+            .attr("x", 0)
+            .attr("y", 0)
+            .attr("width", 0)
+            .attr("height", 0)
+            .attr("class","left-curtain")
+            .style("opacity", 0.2 )
+            .style("fill", "black")
+            .style("border", "black")
+            .attr("border-radius", "5px");
+        this.svgBar.append("rect")
+            .attr("x", 0)
+            .attr("y", 0)
+            .attr("width", 0)
+            .attr("height", 0)
+            .attr("class","right-curtain")
+            .style("opacity", 0.2 )
+            .style("fill", "black")
+            .style("border", "black")
+            .attr("border-radius", "5px");
+        
+        this.svgBar.append("rect")
+            .attr("class","left-label")
+            .style("fill", "#39789c")
+            .style("border", "black")
+            .attr("border-radius", "5px")
+            .style("opacity", 0.8 );
+        this.svgBar.append("rect")
+            .attr("class","right-label")
+            .style("fill", "#39789c")
+            .style("border", "black")
+            .attr("border-radius", "5px")
+            .style("opacity", 0.8 );
+        
+        this.svgBar.append("text")
+            .attr('fill', 'white')
+            .attr("font-family", "sans-serif")
+            .attr("font-size", "16px")
+            .attr("class","left-label-text");
+        this.svgBar.append("text")
+            .attr('fill', 'white')
+            .attr("font-family", "sans-serif")
+            .attr("font-size", "16px")
+            .attr("class","right-label-text");
+
 
         this.svgBar.call(
             d3.brushX()
                 .extent([[0, 0], [this.w, this.h]])
-                .on("start", console.log("start:", new Date()))
+                .on("start", console.log("start"))
                 .on("end", console.log("end"))
                 .on("brush", brush)
         );
+        
         function brush() {
             if (d3.event.sourceEvent.type === "brush") return;
-            //console.log('brushed x:',xb.invert(d3.event.selection[0]), "  y:",xb.invert(d3.event.selection[1]))
-            d3.select(".selection")	
-                .style("opacity", 0.5 )
-                .style("fill", "black")
-                .style("border", "black")
-                .attr("border-radius", "5px");
+            const lableH = 20;
+            const labelW = 100;
 
+            let bruchX1 = Math.round(d3.event.selection[0]);
+            let bruchX2 = Math.round(d3.event.selection[1]);
+
+            bruchX1 = Math.round(window*(Math.round(bruchX1/window)));
+            bruchX2 = Math.round(window*(Math.round(bruchX2/window)));
+            
+            /* LABELS */
+            let xl1 = bruchX1;
+            let xl0 = xl1 - labelW;
+            xl0 = (xl0 >= 0) ? xl0 : 0
+            xl1 = xl0 + labelW;
+            
+            let xr0 = bruchX2;
+            let xr1 = xr0 + labelW;
+            xr0 = (xr1 <= w) ? xr0 : w-labelW;
+            xr1 = xr1 + labelW;
+
+            xl0 = (xr1 >= w && xl1 > xr0) ? w-2*labelW-1 : xl0
+            xr0 = (xl0 <= 0 && xl1 > xr0) ? labelW+1 : xr0
+            
+            d3.select(".handle.handle--w")	
+                .attr("x", bruchX1)
+            d3.select(".handle.handle--e")	
+                .attr("x", bruchX2)
+            d3.select(".selection")
+                .attr("x", bruchX1)
+                .attr("width", bruchX2-bruchX1)
+                .style("opacity", 0 );
+
+            /* CURTAINS */
+            d3.select(".left-curtain")
+                .attr("x", 0)
+                .attr("y", 0)
+                .attr("width", bruchX1)
+                .attr("height", h);
+            d3.select(".right-curtain")
+                .attr("x", bruchX2)
+                .attr("y", 0)
+                .attr("width",w - bruchX2)
+                .attr("height", h);
+
+            d3.select(".left-label")
+                .attr("x", xl0)
+                .attr("y", h)
+                .attr("width", labelW)
+                .attr("height", lableH);
+            d3.select(".right-label")
+                .attr("x", xr0)
+                .attr("y", h)
+                .attr("width", labelW)
+                .attr("height", lableH);
+
+            
+            if(startDate && endDate){
+                if (xb.invert(xl1).getTime() != startDate.getTime() || xb.invert(xr0).getTime() != endDate.getTime()){
+                    var event = new CustomEvent("cat", {
+                        detail: {
+                            startDate: startDate,
+                            endDate: endDate
+                        }
+                    });
+                    document.dispatchEvent(event);
+                }
+            } 
+
+            startDate = xb.invert(xl1);
+            endDate = xb.invert(xr0);
+            
+            d3.select(".left-label-text")
+                .attr("x", xl0+ 8)
+                .attr("y", h + lableH - 4)
+                .text(startDate.toISOString().slice(0,10))
+            d3.select(".right-label-text")
+                .attr("x", xr0+ 8)
+                .attr("y", h + lableH - 4)
+                .text(endDate.toISOString().slice(0,10))
+
+            /*
             d3.selectAll(".upper-rect")
-                .style("fill", "#69b3a2")
+                .style("fill", "#9ccdc1")
                 .filter(d => {
-                    return d.key >= xb.invert(d3.event.selection[0]) && d.key <= xb.invert(d3.event.selection[1]);
+                    let endDate = xb.invert(d3.event.selection[1])
+                    endDate.setDate(endDate.getDate() - 7);
+                    return d.key >= xb.invert(d3.event.selection[0]) && d.key <= endDate;
                 })
-                .style('fill', 'salmon');
+                .style('fill', '#00D180');
 
             d3.selectAll(".lower-rect")
-                .style("fill", "#39789c")
+                .style("fill", "#74a0b9")
                 .filter(d => {
-                    return d.key >= xb.invert(d3.event.selection[0]) && d.key <= xb.invert(d3.event.selection[1]);
+                    let endDate = xb.invert(d3.event.selection[1])
+                    endDate.setDate(endDate.getDate() - 7);
+                    return d.key >= xb.invert(d3.event.selection[0]) && d.key <= endDate;
                 })
-                .style('fill', 'red');
+                .style('fill', '#5c8094');
+            */
         }
     }
 }

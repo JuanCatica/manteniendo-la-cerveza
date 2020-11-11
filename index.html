@@ -22,10 +22,15 @@
     </head>
     <body>
         <div class="container-fluid h-100 pl-0 pr-0 text-white">
-            <nav class="navbar navbar-expand-lg navbar-light"><!--bar navbar-expand-sm bg-light-->
-                <!--<div class="container">-->
+            <nav class="navbar navbar-expand-lg navbar-light">
                 <div class="container-fluid">
-                    <a class="navbar-brand text-white" href="">Manteniendo la Cerveza</a>
+
+                    <button type="submit" data-toggle="tooltip" data-placement="bottom" title=""  style="background-color:transparent; border-color:transparent;"> 
+                        <img src="static/img/beer.png"  height="25"/>
+                        <a class="navbar-brand text-white" href="">Manteniendo la Cerveza</a>
+                    </button>
+
+                    
                     <ul class="nav">
                         <li class="nav-item">
                             <form method="get" action="">
@@ -40,46 +45,54 @@
             <div class="row container-fluid pl-0 pr-0 h-100">
                 <div class="col-2">
                     <div class="input-group text-center">
-                        <button id="update-button" class="bg-success form-control m-1 text-white" data-toggle="modal" data-target="#editModal">Time</button>
+                        <button id="update-button" class="border-success form-control m-1 text-success" data-toggle="modal" data-target="#editModal">Time</button>
                     </div>
 
                     <div class="hr"><hr></div>
-                    
-                    <div class="input-group text-center">
-                        <button id="update-button" class="bg-info form-control m-2 text-white" onClick="doUpdateViz()">Planta A</button>
+                        
+                    <div class="input-group p-1">
+                        <button id="update-button" class="bg-white form-control p-2" onClick="doUpdateViz()">Planta A</button>
                     </div>
-                    <div class="input-group text-center">
-                        <button id="update-button" class="bg-info form-control m-2 text-white" onClick="doUpdateViz()">Planta B</button>
+                    <div class="input-group p-1">
+                        <button id="update-button" class="bg-white form-control p-2" onClick="doUpdateViz()">Planta B</button>
                     </div>
-                    <div class="input-group text-center">
-                        <button id="update-button" class="bg-info form-control m-2 text-white" onClick="doUpdateViz()">Planta C</button>
+                    <div class="input-group p-1">
+                        <button id="update-button" class="bg-white form-control p-2" onClick="doUpdateViz()">Planta C</button>
                     </div>
-                    <div class="input-group text-center">
-                        <button id="update-button" class="bg-info form-control m-2 text-white" onClick="doUpdateViz()">Planta D</button>
+                    <div class="input-group p-1">
+                        <button id="update-button" class="bg-white form-control p-2" onClick="doUpdateViz()">Planta D</button>
                     </div>
-                    <div class="input-group text-center">
-                        <button id="update-button" class="bg-info form-control m-2 text-white" onClick="doUpdateViz()">Planta E</button>
+                    <div class="input-group p-1">
+                        <button id="update-button" class="bg-white form-control p-2" onClick="doUpdateViz()">Planta E</button>
                     </div>
                     
                     <div class="hr"><hr></div>
 
-                    <div class="input-group text-center">
-                        <button id="update-button" class="bg-info form-control m-2 text-white" onClick="doUpdateViz()">AREA 1</button>
+                    <div class="input-group p-1">
+                        <button id="update-button" class="bg-white form-control p-2" onClick="doUpdateViz()">AREA 1</button>
                     </div>
-                    <div class="input-group text-center">
-                        <button id="update-button" class="bg-info form-control m-2 text-white" onClick="doUpdateViz()">AREA 2</button>
+                    <div class="input-group p-1">
+                        <button id="update-button" class="bg-white form-control p-2" onClick="doUpdateViz()">AREA 2</button>
                     </div>
-                    <div class="input-group text-center">
-                        <button id="update-button" class="bg-info form-control m-2 text-white" onClick="doUpdateViz()">AREA 3</button>
+                    <div class="input-group p-1">
+                        <button id="update-button" class="bg-white form-control p-2" onClick="doUpdateViz()">AREA 3</button>
                     </div>
-                    <div class="input-group text-center">
-                        <button id="update-button" class="bg-info form-control m-2 text-white" onClick="doUpdateViz()">AREA 4</button>
+                    <div class="input-group p-1">
+                        <button id="update-button" class="bg-white form-control p-2" onClick="doUpdateViz()">AREA 4</button>
                     </div>
-                    <div class="input-group text-center">
-                        <button id="update-button" class="bg-info form-control m-2 text-white" onClick="doUpdateViz()">AREA 5</button>
+                    <div class="input-group p-1">
+                        <button id="update-button" class="bg-white form-control p-2" onClick="doUpdateViz()">AREA 5</button>
                     </div>
+
+                    <div class="hr"><hr></div>
+
+                    <div class="input-group p-1">
+                        <button id="update-button" class="bg-white form-control p-2" onClick="doUpdateViz()">TOP 10</button>
+                    </div>
+
                 </div>
                 <div class="col-10" >
+                    <div id="sliderTimeFilter"></div>
                     <div id="sliderTimeFilter"></div>
                     <div></div>
                 </div>
@@ -108,10 +121,10 @@
                         </div>
 
                         <div class="modal-footer">
-                            <button type="submit" class="btn btn-secondary" data-toggle="modal" data-dismiss="modal" data-target="#deleteModal" data-whatever="@getbootstrap">Cancelar</button>
+                            <button type="submit" class="btn text-secondary" data-toggle="modal" data-dismiss="modal" data-target="#deleteModal" data-whatever="@getbootstrap">Cancelar</button>
                             <form action="">
                                 <input type="hidden" name="id_contest" value="">
-                                <button type="submit" class="btn btn-success">Listo</button>
+                                <button type="submit" class="btn text-success">Listo</button>
                             </form>
                         </div>
                     </div>
@@ -119,6 +132,7 @@
             </div>
         </div>
         <script type="text/javascript">
+        // Material Select Initialization
             $(function () {
                 $('#datetimepicker1').datetimepicker({
                     format: 'YYYY-MM-DD',
