@@ -32,14 +32,14 @@ class TimeSlider {
             .attr("height", this.height)
             .append("g")
             .attr("transform","translate(" + this.margins.left + "," + this.margins.top + ")")
-        this.gAxix = this.svgBar.append("g")
+        this.gXAxis = this.svgBar.append("g");
             //.attr("transform", "translate(0," + this.h + ")");
         this.update();
     }
 
     update(){   
-        let h = this.h 
-        let w = this.w 
+        let h = this.h;
+        let w = this.w;
         let window = w/this.maxLength;
 
         let startDate = null;
@@ -54,14 +54,14 @@ class TimeSlider {
         var yl = d3.scaleLinear()
             .range([this.h/2, 0])
             .domain([d3.min(this.lowerData, d => d.value), d3.max(this.lowerData, d => d.value)]);
-        this.gAxix.call(d3.axisTop(xb));
+        this.gXAxis.call(d3.axisTop(xb));
         
-        var upDateLowBar = this.svgBar.selectAll(".upper-rect")
+        var updateLowBar = this.svgBar.selectAll(".upper-rect")
             .data(this.lowerData)
-        upDateLowBar.enter()
+        updateLowBar.enter()
             .append("rect")
             .attr("class","upper-rect")
-            .merge(upDateLowBar)
+            .merge(updateLowBar)
             .attr("x", (d) => xb(d.key))
             .attr("y", (d) => this.h/2 - yl(d.value))
             .attr("width", this.w/(this.lowerData.length ))
@@ -70,12 +70,12 @@ class TimeSlider {
             .style("fill", "#9ccdc1")
             //.style('stroke',"#9ccdc1") // #69b3a2
             .exit().remove();
-        var upDateUpBar = this.svgBar.selectAll(".lower-rect")
+        var updateUpBar = this.svgBar.selectAll(".lower-rect")
             .data(this.upperData)
-        upDateUpBar.enter()
+        updateUpBar.enter()
             .append("rect")
             .attr("class","lower-rect")
-            .merge(upDateUpBar)
+            .merge(updateUpBar)
             .attr("x", (d) => xb(d.key))
             .attr("y", this.h/2)
             .attr("width", this.w/(this.upperData.length ))
@@ -144,8 +144,8 @@ class TimeSlider {
             const lableH = 20;
             const labelW = 100;
 
-            let bruchX1 = Math.round(d3.event.selection[0]);
-            let bruchX2 = Math.round(d3.event.selection[1]);
+            let bruchX1 = d3.event.selection[0];
+            let bruchX2 = d3.event.selection[1];
 
             bruchX1 = Math.round(window*(Math.round(bruchX1/window)));
             bruchX2 = Math.round(window*(Math.round(bruchX2/window)));
@@ -195,11 +195,10 @@ class TimeSlider {
                 .attr("y", h)
                 .attr("width", labelW)
                 .attr("height", lableH);
-
             
             if(startDate && endDate){
                 if (xb.invert(xl1).getTime() != startDate.getTime() || xb.invert(xr0).getTime() != endDate.getTime()){
-                    var event = new CustomEvent("cat", {
+                    var event = new CustomEvent("sliderEvent", {
                         detail: {
                             startDate: startDate,
                             endDate: endDate
