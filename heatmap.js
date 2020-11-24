@@ -53,17 +53,15 @@ class HeatMap {
             .domain(equipos)
             .padding(0.01);
         var z = d3.scaleLinear()
-            .range(["white", "#69b3a2"])
+            .range(["green", "red"])
             .domain([0,1])
         this.gYAxis.call(d3.axisLeft(y));
         this.gXAxis.call(d3.axisBottom(x));
 
         var updateCell = this.svgHM.selectAll(".risk-rect")
             .data(this.data)
-
         updateCell.exit()
             .remove();
-
         updateCell.enter()
             .append("rect")
             .attr("class","risk-rect")
