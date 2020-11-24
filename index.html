@@ -1,165 +1,286 @@
 <!DOCTYPE html>
 <html lang="en">
-    <head>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>HeatMap</title>
-        
-        <script src="https://code.jquery.com/jquery-3.5.1.min.js" integrity="sha256-9/aliU8dGd2tb6OSsuzixeV4y/faTqgFtohetphbbj0=" crossorigin="anonymous"></script>
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
-        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"></script>
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.21.0/moment.min.js" type="text/javascript"></script>
-        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css">
-        <link href="static/css/clean-blog.min.css" rel="stylesheet">
-        <link href="static/vendor/font-awesome/css/font-awesome.min.css" rel="stylesheet" type="text/css"> 
-        <script src="static/js/bootstrap-datetimepicker.min.js"></script>
-        <link rel="stylesheet" href="static/css/bootstrap-datetimepicker.min.css">
-        <link href='https://fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic' rel='stylesheet' type='text/css'>
-        <link href='https://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800' rel='stylesheet' type='text/css'> 
-        
-        <!-- Load d3.js -->
-        <script src="https://d3js.org/d3.v4.js"></script>
-    </head>
-    <body>
-        <div class="container-fluid h-100 pl-0 pr-0 text-white">
-            <nav class="navbar navbar-expand-lg navbar-light">
-                <div class="container-fluid">
 
-                    <button type="submit" data-toggle="tooltip" data-placement="bottom" title=""  style="background-color:transparent; border-color:transparent;"> 
-                        <img src="static/img/beer.png"  height="25"/>
-                        <a class="navbar-brand text-white" href="">Manteniendo la Cerveza</a>
-                    </button>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HeatMap</title>
 
-                    
-                    <ul class="nav">
-                        <li class="nav-item">
-                            <form method="get" action="">
-                                <button type="submit" data-toggle="tooltip" data-placement="bottom" title=""  style="background-color:transparent; border-color:transparent;"> 
-                                    <small class="text-white">Historia</small>
-                                </button>
-                            </form>
-                        </li>
-                    </ul>
-                </div>
-            </nav>
-            <div class="row container-fluid pl-0 pr-0 h-100">
-                <div class="col-2">
-                    <div class="input-group text-center">
-                        <button id="update-button" class="border-success form-control m-1 text-success" data-toggle="modal" data-target="#editModal">Time</button>
-                    </div>
+    <script src="https://code.jquery.com/jquery-3.5.1.min.js"
+        integrity="sha256-9/aliU8dGd2tb6OSsuzixeV4y/faTqgFtohetphbbj0=" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.21.0/moment.min.js" type="text/javascript"></script>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css">
+    <link href="static/css/clean-blog.min.css" rel="stylesheet">
+    <link href="static/vendor/font-awesome/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+    <script src="static/js/bootstrap-datetimepicker.min.js"></script>
+    <link rel="stylesheet" href="static/css/bootstrap-datetimepicker.min.css">
+    <link href='https://fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic' rel='stylesheet'
+        type='text/css'>
+    <link
+        href='https://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800'
+        rel='stylesheet' type='text/css'>
 
-                    <div class="hr"><hr></div>
-                        
-                    <div class="input-group p-1">
-                        <button id="update-button" class="bg-white form-control p-2" onClick="doUpdateViz()">Planta A</button>
-                    </div>
-                    <div class="input-group p-1">
-                        <button id="update-button" class="bg-white form-control p-2" onClick="doUpdateViz()">Planta B</button>
-                    </div>
-                    <div class="input-group p-1">
-                        <button id="update-button" class="bg-white form-control p-2" onClick="doUpdateViz()">Planta C</button>
-                    </div>
-                    <div class="input-group p-1">
-                        <button id="update-button" class="bg-white form-control p-2" onClick="doUpdateViz()">Planta D</button>
-                    </div>
-                    <div class="input-group p-1">
-                        <button id="update-button" class="bg-white form-control p-2" onClick="doUpdateViz()">Planta E</button>
-                    </div>
-                    
-                    <div class="hr"><hr></div>
+    <!-- radar -->
+    <!-- Google fonts -->
+    <link href="https://fonts.googleapis.com/css?family=Open+Sans:400,300" rel='stylesheet' type='text/css'>
+    <link href='https://fonts.googleapis.com/css?family=Raleway' rel='stylesheet' type='text/css'>
+    <script src="radar/js/radar-chart.min.js"></script>
+    <script src="radar/js/main.js"></script>
 
-                    <div class="input-group p-1">
-                        <button id="update-button" class="bg-white form-control p-2" onClick="doUpdateViz()">AREA 1</button>
-                    </div>
-                    <div class="input-group p-1">
-                        <button id="update-button" class="bg-white form-control p-2" onClick="doUpdateViz()">AREA 2</button>
-                    </div>
-                    <div class="input-group p-1">
-                        <button id="update-button" class="bg-white form-control p-2" onClick="doUpdateViz()">AREA 3</button>
-                    </div>
-                    <div class="input-group p-1">
-                        <button id="update-button" class="bg-white form-control p-2" onClick="doUpdateViz()">AREA 4</button>
-                    </div>
-                    <div class="input-group p-1">
-                        <button id="update-button" class="bg-white form-control p-2" onClick="doUpdateViz()">AREA 5</button>
-                    </div>
 
-                    <div class="hr"><hr></div>
+    <!-- Load d3.js -->
+    <script src="https://d3js.org/d3.v4.js"></script>
+</head>
 
-                    <div class="input-group p-1">
-                        <button id="update-button" class="bg-white form-control p-2" onClick="doUpdateViz()">TOP 10</button>
-                    </div>
+<body>
+    <div class="container-fluid h-100 pl-0 pr-0 text-white">
+        <nav class="navbar navbar-expand-lg navbar-light">
+            <div class="container-fluid">
 
-                </div>
-                <div class="col-10" >
-                    <div id="sliderTimeFilter"></div>
-                    <div id="heatmap"></div>
-                    <div></div>
-                </div>
+                <button type="submit" data-toggle="tooltip" data-placement="bottom" title=""
+                    style="background-color:transparent; border-color:transparent;">
+                    <img src="static/img/beer.png" height="25" />
+                    <a class="navbar-brand text-white" href="">Manteniendo la Cerveza</a>
+                </button>
+
+
+                <ul class="nav">
+                    <li class="nav-item">
+                        <form method="get" action="">
+                            <button type="submit" data-toggle="tooltip" data-placement="bottom" title=""
+                                style="background-color:transparent; border-color:transparent;">
+                                <small class="text-white">Historia</small>
+                            </button>
+                        </form>
+                    </li>
+                </ul>
             </div>
-        </div> 
+        </nav>
+        <div class="row container-fluid pl-0 pr-0 h-100">
+            <div class="col-2">
+                <div class="input-group text-center">
+                    <button id="update-button" class="border-success form-control m-1 text-success" data-toggle="modal"
+                        data-target="#editModal">Time</button>
+                </div>
 
-        <!--Modal para la definición del rango de tiempo-->
-        <div class="modal fade " id="editModal" tabindex="1" role="dialog" aria-labelledby="editModal" aria-hidden="true">
-            <div class="modal-dialog" role="document">
-                <div class="modal-content">
+                <div class="hr">
+                    <hr>
+                </div>
 
-                    <div class="modal-header">
-                        <h5 class="modal-title" id="editModal">Rango de Tiempo</h5>
-                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                            <span aria-hidden="true">&times;</span>
-                        </button>
+                <div class="input-group p-1">
+                    <button id="update-button" class="bg-white form-control p-2" onClick="doUpdateViz()">Planta
+                        A</button>
+                </div>
+                <div class="input-group p-1">
+                    <button id="update-button" class="bg-white form-control p-2" onClick="doUpdateViz()">Planta
+                        B</button>
+                </div>
+                <div class="input-group p-1">
+                    <button id="update-button" class="bg-white form-control p-2" onClick="doUpdateViz()">Planta
+                        C</button>
+                </div>
+                <div class="input-group p-1">
+                    <button id="update-button" class="bg-white form-control p-2" onClick="doUpdateViz()">Planta
+                        D</button>
+                </div>
+                <div class="input-group p-1">
+                    <button id="update-button" class="bg-white form-control p-2" onClick="doUpdateViz()">Planta
+                        E</button>
+                </div>
+
+                <div class="hr">
+                    <hr>
+                </div>
+
+                <div class="input-group p-1">
+                    <button id="update-button" class="bg-white form-control p-2" onClick="doUpdateViz()">AREA 1</button>
+                </div>
+                <div class="input-group p-1">
+                    <button id="update-button" class="bg-white form-control p-2" onClick="doUpdateViz()">AREA 2</button>
+                </div>
+                <div class="input-group p-1">
+                    <button id="update-button" class="bg-white form-control p-2" onClick="doUpdateViz()">AREA 3</button>
+                </div>
+                <div class="input-group p-1">
+                    <button id="update-button" class="bg-white form-control p-2" onClick="doUpdateViz()">AREA 4</button>
+                </div>
+                <div class="input-group p-1">
+                    <button id="update-button" class="bg-white form-control p-2" onClick="doUpdateViz()">AREA 5</button>
+                </div>
+
+                <div class="hr">
+                    <hr>
+                </div>
+
+                <div class="input-group p-1">
+                    <button id="update-button" class="bg-white form-control p-2" onClick="doUpdateViz()">TOP 10</button>
+                </div>
+
+                <div class="input-group p-1">
+                    <select id="tipo_equipo" name="tipo_equipo" onchange="dibujarRadar()">
+                        <option value="TEQ-1">TEQ-1</option>
+                        <option value="TEQ-10">TEQ-10</option>
+                        <option value="TEQ-11">TEQ-11</option>
+                        <option value="TEQ-12">TEQ-12</option>
+                        <option value="TEQ-13">TEQ-13</option>
+                        <option value="TEQ-14">TEQ-14</option>
+                        <option value="TEQ-15">TEQ-15</option>
+                        <option value="TEQ-16">TEQ-16</option>
+                        <option value="TEQ-17">TEQ-17</option>
+                        <option value="TEQ-18">TEQ-18</option>
+                        <option value="TEQ-19">TEQ-19</option>
+                        <option value="TEQ-2">TEQ-2</option>
+                        <option value="TEQ-20">TEQ-20</option>
+                        <option value="TEQ-21">TEQ-21</option>
+                        <option value="TEQ-22">TEQ-22</option>
+                        <option value="TEQ-23">TEQ-23</option>
+                        <option value="TEQ-24">TEQ-24</option>
+                        <option value="TEQ-25">TEQ-25</option>
+                        <option value="TEQ-26">TEQ-26</option>
+                        <option value="TEQ-27">TEQ-27</option>
+                        <option value="TEQ-28">TEQ-28</option>
+                        <option value="TEQ-29">TEQ-29</option>
+                        <option value="TEQ-3">TEQ-3</option>
+                        <option value="TEQ-30">TEQ-30</option>
+                        <option value="TEQ-31">TEQ-31</option>
+                        <option value="TEQ-32">TEQ-32</option>
+                        <option value="TEQ-33">TEQ-33</option>
+                        <option value="TEQ-34">TEQ-34</option>
+                        <option value="TEQ-35">TEQ-35</option>
+                        <option value="TEQ-36">TEQ-36</option>
+                        <option value="TEQ-37">TEQ-37</option>
+                        <option value="TEQ-38">TEQ-38</option>
+                        <option value="TEQ-39">TEQ-39</option>
+                        <option value="TEQ-4">TEQ-4</option>
+                        <option value="TEQ-40">TEQ-40</option>
+                        <option value="TEQ-41">TEQ-41</option>
+                        <option value="TEQ-42">TEQ-42</option>
+                        <option value="TEQ-43">TEQ-43</option>
+                        <option value="TEQ-44">TEQ-44</option>
+                        <option value="TEQ-45">TEQ-45</option>
+                        <option value="TEQ-46">TEQ-46</option>
+                        <option value="TEQ-47">TEQ-47</option>
+                        <option value="TEQ-48">TEQ-48</option>
+                        <option value="TEQ-49">TEQ-49</option>
+                        <option value="TEQ-5">TEQ-5</option>
+                        <option value="TEQ-50">TEQ-50</option>
+                        <option value="TEQ-51">TEQ-51</option>
+                        <option value="TEQ-52">TEQ-52</option>
+                        <option value="TEQ-53">TEQ-53</option>
+                        <option value="TEQ-54">TEQ-54</option>
+                        <option value="TEQ-55">TEQ-55</option>
+                        <option value="TEQ-56">TEQ-56</option>
+                        <option value="TEQ-57">TEQ-57</option>
+                        <option value="TEQ-58">TEQ-58</option>
+                        <option value="TEQ-59">TEQ-59</option>
+                        <option value="TEQ-6">TEQ-6</option>
+                        <option value="TEQ-60">TEQ-60</option>
+                        <option value="TEQ-61">TEQ-61</option>
+                        <option value="TEQ-62">TEQ-62</option>
+                        <option value="TEQ-63">TEQ-63</option>
+                        <option value="TEQ-64">TEQ-64</option>
+                        <option value="TEQ-65">TEQ-65</option>
+                        <option value="TEQ-66">TEQ-66</option>
+                        <option value="TEQ-67">TEQ-67</option>
+                        <option value="TEQ-68">TEQ-68</option>
+                        <option value="TEQ-69">TEQ-69</option>
+                        <option value="TEQ-7">TEQ-7</option>
+                        <option value="TEQ-70">TEQ-70</option>
+                        <option value="TEQ-71">TEQ-71</option>
+                        <option value="TEQ-72">TEQ-72</option>
+                        <option value="TEQ-73">TEQ-73</option>
+                        <option value="TEQ-74">TEQ-74</option>
+                        <option value="TEQ-75">TEQ-75</option>
+                        <option value="TEQ-76">TEQ-76</option>
+                        <option value="TEQ-77" selected>TEQ-77</option>
+                        <option value="TEQ-78">TEQ-78</option>
+                        <option value="TEQ-79">TEQ-79</option>
+                        <option value="TEQ-8">TEQ-8</option>
+                        <option value="TEQ-9">TEQ-9</option>
+                    </select>
+                </div>
+
+            </div>
+            <div class="col-10">
+                <div id="sliderTimeFilter"></div>
+                <div id="heatmap"></div>
+                <div></div>
+            </div>
+        </div>
+    </div>
+    <div id="radarChartHoras"></div>
+    <div id="radarChartCosto"></div>
+    <!--Modal para la definición del rango de tiempo-->
+    <div class="modal fade " id="editModal" tabindex="1" role="dialog" aria-labelledby="editModal" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+
+                <div class="modal-header">
+                    <h5 class="modal-title" id="editModal">Rango de Tiempo</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="input-group mb-1">
+                        <div style="width:20%" class="input-group-prepend"><span style="width:100%"
+                                class="input-group-text" id="inputGroup-sizing-default">Inicio</span></div>
+                        <input type='text' autocomplete="off" name="start_date" class="form-control"
+                            id='datetimepicker1' required>
                     </div>
-                    <div class="modal-body">
-                        <div class="input-group mb-1">
-                            <div style="width:20%" class="input-group-prepend"><span style="width:100%" class="input-group-text" id="inputGroup-sizing-default">Inicio</span></div>
-                            <input type='text' autocomplete="off" name="start_date" class="form-control"   id='datetimepicker1'  required>
-                        </div>
-                        <div class="input-group mb-1">
-                            <div style="width:20%" class="input-group-prepend"><span style="width:100%" class="input-group-text" id="inputGroup-sizing-default">Fin</span></div>
-                            <input type='text' autocomplete="off" name="end_date"  class="form-control"   id='datetimepicker2'  required>
-                        </div>
+                    <div class="input-group mb-1">
+                        <div style="width:20%" class="input-group-prepend"><span style="width:100%"
+                                class="input-group-text" id="inputGroup-sizing-default">Fin</span></div>
+                        <input type='text' autocomplete="off" name="end_date" class="form-control" id='datetimepicker2'
+                            required>
+                    </div>
 
-                        <div class="modal-footer">
-                            <button type="submit" class="btn text-secondary" data-toggle="modal" data-dismiss="modal" data-target="#deleteModal" data-whatever="@getbootstrap">Cancelar</button>
-                            <form action="">
-                                <input type="hidden" name="id_contest" value="">
-                                <button type="submit" class="btn text-success">Listo</button>
-                            </form>
-                        </div>
+                    <div class="modal-footer">
+                        <button type="submit" class="btn text-secondary" data-toggle="modal" data-dismiss="modal"
+                            data-target="#deleteModal" data-whatever="@getbootstrap">Cancelar</button>
+                        <form action="">
+                            <input type="hidden" name="id_contest" value="">
+                            <button type="submit" class="btn text-success">Listo</button>
+                        </form>
                     </div>
                 </div>
             </div>
         </div>
-        <script type="text/javascript">
+    </div>
+    <script type="text/javascript">
         // Material Select Initialization
-            $(function () {
-                $('#datetimepicker1').datetimepicker({
-                    format: 'YYYY-MM-DD',
-                });
+        $(function () {
+            $('#datetimepicker1').datetimepicker({
+                format: 'YYYY-MM-DD',
             });
-        </script>
-        <script type="text/javascript">
-            $(function () {
-                $('#datetimepicker2').datetimepicker({
-                    format: 'YYYY-MM-DD',
-                });
+        });
+    </script>
+    <script type="text/javascript">
+        $(function () {
+            $('#datetimepicker2').datetimepicker({
+                format: 'YYYY-MM-DD',
             });
-        </script>
-        <script src="heatmap.js"></script>
-        <script src="timeslider.js"></script>
-        <script src="beer.js"></script>
-        <style>
-            .navbar {
-                background-color: #39789c;
-            }
-            .hr {
-                border: 1px solid green;
-                //border-radius: 5px;
-                padding: 0px;
-                margin: 4px; 
-                height:0px  
-            }
-        </style>
-    </body>
+        });
+    </script>
+    <script src="heatmap.js"></script>
+    <script src="timeslider.js"></script>
+    <script src="beer.js"></script>
+    <style>
+        .navbar {
+            background-color: #39789c;
+        }
+
+        .hr {
+            border: 1px solid green;
+            //border-radius: 5px;
+            padding: 0px;
+            margin: 4px;
+            height: 0px
+        }
+    </style>
+
+</body>
+
 </html>

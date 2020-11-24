@@ -56,9 +56,15 @@ $(document).ready(function(){
         //console.log(e.detail)
         //console.log(heatMap.dataFull)
         data_filtrada = heatMap.dataFull.filter(function(d) {return d.fecha.getTime() >= e.detail.startDate.getTime() && d.fecha.getTime() <= e.detail.endDate.getTime();});
-        //console.log(data_filtrada)
+        //console.log("=======================");
+        //console.log(data_filtrada);
+        //console.log(e.detail.startDate);
+        //console.log(e.detail.endDate);
+        //console.log(e.detail);
         heatMap.setData(data_filtrada, e.detail.startDate, e.detail.endDate);
         heatMap.update();
+        //radar
+        dibujarRadar(e.detail.startDate, e.detail.endDate);
     },false);
 });
 
