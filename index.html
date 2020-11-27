@@ -119,86 +119,12 @@
                 </div>
 
                 <div class="input-group p-1">
-                    <select id="tipo_equipo" name="tipo_equipo" onchange="dibujarRadar()">
-                        <option value="TEQ-1">TEQ-1</option>
-                        <option value="TEQ-10">TEQ-10</option>
-                        <option value="TEQ-11">TEQ-11</option>
-                        <option value="TEQ-12">TEQ-12</option>
-                        <option value="TEQ-13">TEQ-13</option>
-                        <option value="TEQ-14">TEQ-14</option>
-                        <option value="TEQ-15">TEQ-15</option>
-                        <option value="TEQ-16">TEQ-16</option>
-                        <option value="TEQ-17">TEQ-17</option>
-                        <option value="TEQ-18">TEQ-18</option>
-                        <option value="TEQ-19">TEQ-19</option>
-                        <option value="TEQ-2">TEQ-2</option>
-                        <option value="TEQ-20">TEQ-20</option>
-                        <option value="TEQ-21">TEQ-21</option>
-                        <option value="TEQ-22">TEQ-22</option>
-                        <option value="TEQ-23">TEQ-23</option>
-                        <option value="TEQ-24">TEQ-24</option>
-                        <option value="TEQ-25">TEQ-25</option>
-                        <option value="TEQ-26">TEQ-26</option>
-                        <option value="TEQ-27">TEQ-27</option>
-                        <option value="TEQ-28">TEQ-28</option>
-                        <option value="TEQ-29">TEQ-29</option>
-                        <option value="TEQ-3">TEQ-3</option>
-                        <option value="TEQ-30">TEQ-30</option>
-                        <option value="TEQ-31">TEQ-31</option>
-                        <option value="TEQ-32">TEQ-32</option>
-                        <option value="TEQ-33">TEQ-33</option>
-                        <option value="TEQ-34">TEQ-34</option>
-                        <option value="TEQ-35">TEQ-35</option>
-                        <option value="TEQ-36">TEQ-36</option>
-                        <option value="TEQ-37">TEQ-37</option>
-                        <option value="TEQ-38">TEQ-38</option>
-                        <option value="TEQ-39">TEQ-39</option>
-                        <option value="TEQ-4">TEQ-4</option>
-                        <option value="TEQ-40">TEQ-40</option>
-                        <option value="TEQ-41">TEQ-41</option>
-                        <option value="TEQ-42">TEQ-42</option>
-                        <option value="TEQ-43">TEQ-43</option>
-                        <option value="TEQ-44">TEQ-44</option>
-                        <option value="TEQ-45">TEQ-45</option>
-                        <option value="TEQ-46">TEQ-46</option>
-                        <option value="TEQ-47">TEQ-47</option>
-                        <option value="TEQ-48">TEQ-48</option>
-                        <option value="TEQ-49">TEQ-49</option>
-                        <option value="TEQ-5">TEQ-5</option>
-                        <option value="TEQ-50">TEQ-50</option>
-                        <option value="TEQ-51">TEQ-51</option>
-                        <option value="TEQ-52">TEQ-52</option>
-                        <option value="TEQ-53">TEQ-53</option>
-                        <option value="TEQ-54">TEQ-54</option>
-                        <option value="TEQ-55">TEQ-55</option>
-                        <option value="TEQ-56">TEQ-56</option>
-                        <option value="TEQ-57">TEQ-57</option>
-                        <option value="TEQ-58">TEQ-58</option>
-                        <option value="TEQ-59">TEQ-59</option>
-                        <option value="TEQ-6">TEQ-6</option>
-                        <option value="TEQ-60">TEQ-60</option>
-                        <option value="TEQ-61">TEQ-61</option>
-                        <option value="TEQ-62">TEQ-62</option>
-                        <option value="TEQ-63">TEQ-63</option>
-                        <option value="TEQ-64">TEQ-64</option>
-                        <option value="TEQ-65">TEQ-65</option>
-                        <option value="TEQ-66">TEQ-66</option>
-                        <option value="TEQ-67">TEQ-67</option>
-                        <option value="TEQ-68">TEQ-68</option>
-                        <option value="TEQ-69">TEQ-69</option>
-                        <option value="TEQ-7">TEQ-7</option>
-                        <option value="TEQ-70">TEQ-70</option>
-                        <option value="TEQ-71">TEQ-71</option>
-                        <option value="TEQ-72">TEQ-72</option>
-                        <option value="TEQ-73">TEQ-73</option>
-                        <option value="TEQ-74">TEQ-74</option>
-                        <option value="TEQ-75">TEQ-75</option>
-                        <option value="TEQ-76">TEQ-76</option>
-                        <option value="TEQ-77" selected>TEQ-77</option>
-                        <option value="TEQ-78">TEQ-78</option>
-                        <option value="TEQ-79">TEQ-79</option>
-                        <option value="TEQ-8">TEQ-8</option>
-                        <option value="TEQ-9">TEQ-9</option>
+                    <select class="bg-white form-control p-2" id="sel_id_equipo" name="tipo_equipo">
+                        <option value="EQ10603" selected>EQ10603</option>
+                        <option value="EQ11089">EQ11089</option>
+                        <option value="EQ10012">EQ10012</option>
+                        <option value="EQ10045">EQ10045</option>
+                        <option value="EQ11735">EQ11735</option>
                     </select>
                 </div>
 
@@ -206,13 +132,12 @@
             <div class="col-10">
                 <div id="sliderTimeFilter"></div>
                 <div id="heatmap"></div>
+                <div id="radarChartHoras"></div>
+                <div id="radarChartCosto"></div>
                 <div></div>
             </div>
         </div>
     </div>
-    <div id="radarChartHoras"></div>
-    <div id="radarChartCosto"></div>
-    
     <!--Modal para la definición del rango de tiempo-->
     <div class="modal fade " id="editModal" tabindex="1" role="dialog" aria-labelledby="editModal" aria-hidden="true">
         <div class="modal-dialog" role="document">
