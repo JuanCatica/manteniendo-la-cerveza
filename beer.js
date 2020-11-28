@@ -1,6 +1,7 @@
 dataTime = null;
 dataCost = null;
-data_risk = null;
+dataRisk = null;
+datosRadar = null;
 timeS = null;
 
 $(document).ready(function(){   
@@ -12,11 +13,13 @@ $(document).ready(function(){
         .defer(d3.json, "dbprocessed/times.json")
         .defer(d3.json, "dbprocessed/costs.json")
         .defer(d3.json, "dbprocessed/risks_test.json")
-        .await(function(error, data_time, data_cost, data_risk) {
+        .defer(d3.csv, "radar/data/datos_radar.csv")
+        .await(function(error, data_time, data_cost, data_risk, datos_radar) {
             if (error) throw error;
             dataTime = data_time;
             dataCost = data_cost;
-            data_risk = data_risk;
+            dataRisk = data_risk;
+            datosRadar = datos_radar;
 
             /** PROCESAMIENTO DE DATOS */
             /** TIME&COST DATA */
@@ -37,18 +40,18 @@ $(document).ready(function(){
             minTime = Math.min(dataTime[0].key, dataCost[0].key);
 
             /* RISK DATA */
-            data_risk.forEach(function(d) { d.fecha = tParser(d.fecha);});
-            data_risk = data_risk.filter(function(d) {return d.fecha.getYear() == 118;});
-            data_risk.sort(function(a,b){return new Date(b.fecha) - new Date(a.fecha);});
-            var maxRisk = data_risk[data_risk.length - 1].fecha
-            var minRisk = data_risk[0].fecha
+            dataRisk.forEach(function(d) { d.fecha = tParser(d.fecha);});
+            dataRisk = dataRisk.filter(function(d) {return d.fecha.getYear() == 118;});
+            dataRisk.sort(function(a,b){return new Date(b.fecha) - new Date(a.fecha);});
+            var maxRisk = dataRisk[dataRisk.length - 1].fecha
+            var minRisk = dataRisk[0].fecha
 
             /** VISUALIZACION */
             timeS.setData(dataTime, dataCost, minTime, maxTime);
             timeS.draw();
 
-            heatMap.setDataFull(data_risk);
-            heatMap.setData(data_risk, minRisk, maxRisk);
+            heatMap.setDataFull(dataRisk);
+            heatMap.setData(dataRisk, minRisk, maxRisk);
             heatMap.draw();
         });
 
@@ -64,7 +67,7 @@ $(document).ready(function(){
         heatMap.setData(data_filtrada, e.detail.startDate, e.detail.endDate);
         heatMap.update();
         //radar
-        dibujarRadar(e.detail.startDate, e.detail.endDate);
+        dibujarRadar(e.detail.startDate, e.detail.endDate, datosRadar);
     },false);
 });
 

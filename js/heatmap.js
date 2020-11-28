@@ -8,7 +8,7 @@ class HeatMap {
         this.margins = margins;
 
         d3.select("body").append("div")	
-        .attr("class", "tooltip-hm")				
+        .attr("class", "tooltip-hm")
         .style("opacity", 0)
         .style("position", "absolute")
         .style("text-align", "center")
@@ -41,7 +41,6 @@ class HeatMap {
     }
 
     update(){
-        
         var div = d3.select(".tooltip-hm")
         var equipos = d3.map(this.data, function(d){return d.id_equipo;}).keys();
 
