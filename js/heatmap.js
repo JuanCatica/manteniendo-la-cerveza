@@ -1,4 +1,4 @@
-class HeatMap {
+class HeatMap{
 
     constructor(DOMElement, width, height, margins) {
         this.DOMElement = DOMElement;
@@ -15,6 +15,7 @@ class HeatMap {
         .style("background", "lightsteelblue")
         .style("border-radius", "3px");
     }
+    
     setDataFull(data){
         this.dataFull = data;
     }

@@ -1,4 +1,23 @@
-  ///////////////////////////////////////////////////////////////////////
+class LineChart{
+
+    constructor(DOMElement, width, height, margins) {
+        this.DOMElement = DOMElement;
+        this.data = null;
+        this.width = width;
+        this.height = height;
+        this.margins = margins;
+
+        d3.select("body").append("div")	
+        .attr("class", "tooltip-hm")
+        .style("opacity", 0)
+        .style("position", "absolute")
+        .style("text-align", "center")
+        .style("background", "lightsteelblue")
+        .style("border-radius", "3px");
+    }
+}
+
+///////////////////////////////////////////////////////////////////////
     //////////////////// Draw STack Bar //////////////////////////////////
     /////////////////////////////////////////////////////////////////////
     // List of subgroups = header of the csv files = soil condition here
