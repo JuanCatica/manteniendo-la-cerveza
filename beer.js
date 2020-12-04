@@ -1,4 +1,4 @@
-dataTime = null;
+dataCostTime = null;
 dataCost = null;
 dataRisk = null;
 datosRadar = null;
@@ -11,34 +11,43 @@ $(document).ready(function(){
     heatMap = new HeatMap("#heatmap", w, 350, {top:25,right:10,bottom:50,left:50});
     
     d3.queue()
-        .defer(d3.json, "dbprocessed/times.json")
-        .defer(d3.json, "dbprocessed/costs.json")
+        .defer(d3.csv, "dbprocessed/ct-general.csv")
         .defer(d3.json, "dbprocessed/risks_test.json") //_test
         .defer(d3.csv, "radar/data/datos_radar.csv")
-        .await(function(error, data_time, data_cost, data_risk, datos_radar) {
+        .await(function(error, data_cost_time, data_risk, datos_radar) {
             if (error) throw error;
-            dataTime = data_time;
-            dataCost = data_cost;
+            dataCostTime = data_cost_time;
+            
             dataRisk = data_risk;
             datosRadar = datos_radar;
 
             /** PROCESAMIENTO DE DATOS */
-            /** TIME&COST DATA */
-            let tParser = d3.timeParse("%Y-%m-%d %H:%M:%S");
-            dataTime = d3.nest()
+            /** SLIDER : TIME-&-COST */
+            let tParser = d3.timeParse("%Y-%m-%d");
+            dataCostTimeSlider = d3.nest()
                 .key(function(d) { return d.fecha;})
-                .rollup(function(d) { return d3.sum(d, function(g) {return g["trabajo_real"]; }); })
-                .entries(dataTime);
-            dataTime.forEach(function(d) { d.key = tParser(d.key);});
-            dataCost = d3.nest()
-                .key(function(d) { return d.fecha;})
-                .rollup(function(d) { return d3.sum(d, function(g) {return g.costo_total; }); })
-                .entries(dataCost);
-            dataCost.forEach(function(d) { d.key = tParser(d.key);});
-            dataTime.sort(function(a,b){return new Date(b.fecha) - new Date(a.fecha);});
-            dataCost.sort(function(a,b){return new Date(b.fecha) - new Date(a.fecha);});
-            maxTime = Math.max(dataTime[dataTime.length - 1].key, dataCost[dataCost.length - 1].key);
-            minTime = Math.min(dataTime[0].key, dataCost[0].key);
+                .rollup(function(d) {
+                    return {
+                        "up" : d3.sum(d, (g) => g["trabajo_real"]),
+                        "down" : d3.sum(d, (g) => g["costo_total"]),
+                    }})
+                .entries(dataCostTime);
+            dataCostTimeSlider = dataCostTimeSlider.map(function(d) {
+                var start_date = tParser(d.key);
+                var end_date = start_date;
+                end_date.setDate(end_date.getDate() + 7);
+                return {
+                    "start_date" : start_date,
+                    "end_date" : end_date,   
+                    "up" : d.up,
+                    "down" : d.down,
+                }
+            });
+            dataCostTimeSlider.sort(function(a,b){return new Date(b.date) - new Date(a.date);});
+            timeS.setData(dataCostTimeSlider);
+            console.log(dataCostTimeSlider[0])
+            /** LINE/BAR_CHART : TIME-&-COST */
+
 
             /* RISK DATA */
             dataRisk.forEach(function(d) { d.fecha = tParser(d.fecha);});
@@ -48,7 +57,7 @@ $(document).ready(function(){
             var minRisk = dataRisk[0].fecha
 
             /** VISUALIZACION */
-            timeS.setData(dataTime, dataCost, minTime, maxTime); // revisar la entrada de estos tiempos, incorporar como filtros 
+             // revisar la entrada de estos tiempos, incorporar como filtros 
             timeS.draw();
 
             //heatMap.setDataFull(dataRisk);

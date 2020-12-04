@@ -13,13 +13,15 @@ class TimeSlider {
         this.margins = margins;
     }
 
-    setData(upperData, lowerData, minTime, maxTime){
-        this.upperData = upperData;
-        this.lowerData = lowerData;
-        this.maxTime = new Date(maxTime);
-        this.minTime = new Date(minTime);
-        this.maxTime.setDate(this.maxTime.getDate() + 7);
-        this.maxLength = Math.max(this.upperData.length, this.lowerData.length)
+    setData(data, start_date=null, end_date=null, up=null, down=null){
+        start_date = start_date!=null ? start_date: "start_date";
+        end_date = end_date!=null ? end_date: "end_date";
+        up = up!=null ? up: "up";
+        down = down!=null ? down: "down";
+
+        this.data = data;
+        this.maxTime = data[data.length - 1][end_date]
+        this.minTime = data[0][start_date]
     }
 
     draw(){
@@ -40,7 +42,7 @@ class TimeSlider {
     update(){   
         let h = this.h;
         let w = this.w;
-        let window = w/this.maxLength;
+        let window = w/this.data.length;
 
         let startDate = null;
         let endDate = null;
@@ -62,7 +64,7 @@ class TimeSlider {
             .append("rect")
             .attr("class","upper-rect")
             .merge(updateLowBar)
-            .attr("x", (d) => xb(d.key))
+            .attr("x", (d) => xb(d.date))
             .attr("y", (d) => this.h/2 - yl(d.value))
             .attr("width", this.w/(this.lowerData.length ))
             .attr("height",(d) => yl(d.value))
@@ -76,7 +78,7 @@ class TimeSlider {
             .append("rect")
             .attr("class","lower-rect")
             .merge(updateUpBar)
-            .attr("x", (d) => xb(d.key))
+            .attr("x", (d) => xb(d.date))
             .attr("y", this.h/2)
             .attr("width", this.w/(this.upperData.length ))
             .attr("height", (d) => yu(d.value))
