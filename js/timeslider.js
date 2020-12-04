@@ -13,15 +13,22 @@ class TimeSlider {
         this.margins = margins;
     }
 
-    setData(data, start_date=null, end_date=null, up=null, down=null){
-        start_date = start_date!=null ? start_date: "start_date";
-        end_date = end_date!=null ? end_date: "end_date";
+    setData(data, date0=null, date1=null, up=null, down=null){
+        date0 = date0!=null ? date0: "date0";
+        date1 = date1!=null ? date1: "date1";
         up = up!=null ? up: "up";
         down = down!=null ? down: "down";
 
         this.data = data;
-        this.maxTime = data[data.length - 1][end_date]
-        this.minTime = data[0][start_date]
+        this.data.sort(function(a,b){return new Date(a[date0]) - new Date(b[date0]);});
+        this.minTime = data[0][date0]
+        this.maxTime = data[data.length - 1][date1]
+
+        console.log(this.minTime)
+        console.log(this.maxTime)
+
+        console.log(typeof this.minTime)
+        console.log(typeof this.maxTime)
     }
 
     draw(){
@@ -52,38 +59,38 @@ class TimeSlider {
             .domain([this.minTime,this.maxTime]);
         var yu = d3.scaleLinear()
             .range([this.h/2, 0])
-            .domain([d3.min(this.upperData, d => d.value), d3.max(this.upperData, d => d.value)]);
+            .domain([d3.min(this.data, d => d.up), d3.max(this.data, d => d.up)]);
         var yl = d3.scaleLinear()
             .range([this.h/2, 0])
-            .domain([d3.min(this.lowerData, d => d.value), d3.max(this.lowerData, d => d.value)]);
+            .domain([d3.min(this.data, d => d.down), d3.max(this.data, d => d.down)]);
         this.gXAxis.call(d3.axisTop(xb));
         
-        var updateLowBar = this.svgBar.selectAll(".upper-rect")
-            .data(this.lowerData)
-        updateLowBar.enter()
-            .append("rect")
-            .attr("class","upper-rect")
-            .merge(updateLowBar)
-            .attr("x", (d) => xb(d.date))
-            .attr("y", (d) => this.h/2 - yl(d.value))
-            .attr("width", this.w/(this.lowerData.length ))
-            .attr("height",(d) => yl(d.value))
-            .style("opacity", 0.8)
-            .style("fill", "#9ccdc1")
-            //.style('stroke',"#9ccdc1") // #69b3a2
-            .exit().remove();
-        var updateUpBar = this.svgBar.selectAll(".lower-rect")
-            .data(this.upperData)
+        var updateUpBar = this.svgBar.selectAll(".upper-rect")
+            .data(this.data)
         updateUpBar.enter()
             .append("rect")
-            .attr("class","lower-rect")
+            .attr("class","upper-rect")
             .merge(updateUpBar)
-            .attr("x", (d) => xb(d.date))
+            .attr("x", (d) => xb(d.date0))
             .attr("y", this.h/2)
-            .attr("width", this.w/(this.upperData.length ))
-            .attr("height", (d) => yu(d.value))
+            .attr("width", this.w/(this.data.length ))
+            .attr("height", (d) => yu(d.up))
             .style("opacity", 0.8)
             .style("fill", "#74a0b9")//salmon #39789c
+            .exit().remove();
+        
+        var updateDownBar = this.svgBar.selectAll(".lower-rect")
+            .data(this.data)
+        updateDownBar.enter()
+            .append("rect")
+            .attr("class","lower-rect")
+            .merge(updateDownBar)
+            .attr("x", (d) => xb(d.date0))
+            .attr("y", (d) => this.h/2 - yl(d.down))
+            .attr("width", this.w/(this.data.length ))
+            .attr("height",(d) => yl(d.down))
+            .style("opacity", 0.8)
+            .style("fill", "#9ccdc1")//.style('stroke',"#9ccdc1") // #69b3a2
             .exit().remove();
         
         /* BRUSH ELEMENTS */
@@ -131,7 +138,6 @@ class TimeSlider {
             .attr("font-family", "sans-serif")
             .attr("font-size", "16px")
             .attr("class","right-label-text");
-
 
         this.svgBar.call(
             d3.brushX()

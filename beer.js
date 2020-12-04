@@ -28,26 +28,24 @@ $(document).ready(function(){
                 .key(function(d) { return d.fecha;})
                 .rollup(function(d) {
                     return {
-                        "up" : d3.sum(d, (g) => g["trabajo_real"]),
-                        "down" : d3.sum(d, (g) => g["costo_total"]),
+                        up : d3.sum(d, (g) => g["trabajo_real"]),
+                        down : d3.sum(d, (g) => g["costo_total"]),
                     }})
                 .entries(dataCostTime);
             dataCostTimeSlider = dataCostTimeSlider.map(function(d) {
-                var start_date = tParser(d.key);
-                var end_date = start_date;
-                end_date.setDate(end_date.getDate() + 7);
+                var date0 = new Date(tParser(d.key));
+                var date1 = new Date(date0);
+                date1.setDate(date1.getDate() + 7);
                 return {
-                    "start_date" : start_date,
-                    "end_date" : end_date,   
-                    "up" : d.up,
-                    "down" : d.down,
+                    "date0" : date0,
+                    "date1" : date1,   
+                    "up" : d.value.up,
+                    "down" : d.value.down,
                 }
             });
-            dataCostTimeSlider.sort(function(a,b){return new Date(b.date) - new Date(a.date);});
             timeS.setData(dataCostTimeSlider);
-            console.log(dataCostTimeSlider[0])
+            
             /** LINE/BAR_CHART : TIME-&-COST */
-
 
             /* RISK DATA */
             dataRisk.forEach(function(d) { d.fecha = tParser(d.fecha);});
@@ -74,7 +72,7 @@ $(document).ready(function(){
         heatMap.update();
 
         /** RADAR */
-        dibujarRadar(e.detail.startDate, e.detail.endDate, datosRadar);
+        //dibujarRadar(e.detail.startDate, e.detail.endDate, datosRadar);
     },false);
 });
 
