@@ -3,6 +3,7 @@ dataCost = null;
 dataRisk = null;
 datosRadar = null;
 timeS = null;
+heatMap = null;
 
 $(document).ready(function(){   
     var w = document.getElementById('sliderTimeFilter').clientWidth;
@@ -12,7 +13,7 @@ $(document).ready(function(){
     d3.queue()
         .defer(d3.json, "dbprocessed/times.json")
         .defer(d3.json, "dbprocessed/costs.json")
-        .defer(d3.json, "dbprocessed/risks_test.json")
+        .defer(d3.json, "dbprocessed/risks_test.json") //_test
         .defer(d3.csv, "radar/data/datos_radar.csv")
         .await(function(error, data_time, data_cost, data_risk, datos_radar) {
             if (error) throw error;
@@ -47,26 +48,23 @@ $(document).ready(function(){
             var minRisk = dataRisk[0].fecha
 
             /** VISUALIZACION */
-            timeS.setData(dataTime, dataCost, minTime, maxTime);
+            timeS.setData(dataTime, dataCost, minTime, maxTime); // revisar la entrada de estos tiempos, incorporar como filtros 
             timeS.draw();
 
-            heatMap.setDataFull(dataRisk);
-            heatMap.setData(dataRisk, minRisk, maxRisk);
+            //heatMap.setDataFull(dataRisk);
+            heatMap.setData(dataRisk);
             heatMap.draw();
         });
 
     document.addEventListener("sliderEvent",function(e) {
-        //console.log(e.detail)
-        //console.log(heatMap.dataFull)
-        data_filtrada = heatMap.dataFull.filter(function(d) {return d.fecha.getTime() >= e.detail.startDate.getTime() && d.fecha.getTime() <= e.detail.endDate.getTime();});
-        //console.log("=======================");
-        //console.log(data_filtrada);
-        //console.log(e.detail.startDate);
-        //console.log(e.detail.endDate);
-        //console.log(e.detail);
-        heatMap.setData(data_filtrada, e.detail.startDate, e.detail.endDate);
+        /** LINECHART */
+
+
+        /** HEATMAP */
+        heatMap.filter(e.detail.startDate, e.detail.endDate);
         heatMap.update();
-        //radar
+
+        /** RADAR */
         dibujarRadar(e.detail.startDate, e.detail.endDate, datosRadar);
     },false);
 });

@@ -15,13 +15,16 @@ class HeatMap{
         .style("background", "lightsteelblue")
         .style("border-radius", "3px");
     }
-    
-    setDataFull(data){
-        this.dataFull = data;
+
+    /* Set the global data to be used for filtering and feed the VIZ.
+     * Data pased by reference 
+     */
+    setData(data){
+        this.data = data;
     }
 
-    setData(data, minTime, maxTime){
-        this.data = data;
+    filter(minTime, maxTime){
+        this.data_filtered = this.data.filter(function(d) {return d.fecha.getTime() >= minTime && d.fecha.getTime() <= maxTime;});
         this.maxTime = maxTime;
         this.minTime = minTime;
     }
@@ -34,7 +37,7 @@ class HeatMap{
             .attr("width", this.width)
             .attr("height", this.height)
             .append("g")
-            .attr("transform","translate(" + this.margins.left + "," + this.margins.top + ")")
+            .attr("transform","translate(" + this.margins.left + "," + this.margins.top + ")");
         this.gYAxis = this.svgHM.append("g")
         this.gXAxis = this.svgHM.append("g")
             .attr("transform", "translate(0," + this.h + ")");
@@ -43,7 +46,7 @@ class HeatMap{
 
     update(){
         var div = d3.select(".tooltip-hm")
-        var equipos = d3.map(this.data, function(d){return d.id_equipo;}).keys();
+        var equipos = d3.map(this.data_filtered, function(d){return d.id_equipo;}).keys();
 
         var x = d3.scaleTime()
             .range([0, this.width])
@@ -59,7 +62,7 @@ class HeatMap{
         this.gXAxis.call(d3.axisBottom(x));
 
         var updateCell = this.svgHM.selectAll(".risk-rect")
-            .data(this.data)
+            .data(this.data_filtered)
         updateCell.exit()
             .remove();
         updateCell.enter()
@@ -68,7 +71,7 @@ class HeatMap{
             .merge(updateCell)
             .attr("x", (d) => x(d.fecha))
             .attr("y", (d) => y(d.id_equipo))
-            .attr("width", this.w/(this.data.length/16 ))
+            .attr("width", this.w/(this.data_filtered.length/16 ))
             .attr("height", y.bandwidth() )
             .style("fill", (d) => z(d.risk))
             .style("opacity", 0.8)   

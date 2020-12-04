@@ -15,6 +15,17 @@ class LineChart{
         .style("background", "lightsteelblue")
         .style("border-radius", "3px");
     }
+
+    setData(upperData, lowerData){
+        this.upperData = upperData;
+        this.lowerData = lowerData;
+        this.maxTime = new Date(maxTime);
+        this.minTime = new Date(minTime);
+        this.maxTime.setDate(this.maxTime.getDate() + 7);
+        this.maxLength = Math.max(this.upperData.length, this.lowerData.length)
+    }
+
+
 }
 
 ///////////////////////////////////////////////////////////////////////
