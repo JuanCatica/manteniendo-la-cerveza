@@ -16,85 +16,79 @@ class LineChart{
         .style("border-radius", "3px");
     }
 
-    setData(upperData, lowerData){
-        this.upperData = upperData;
-        this.lowerData = lowerData;
-        this.maxTime = new Date(maxTime);
-        this.minTime = new Date(minTime);
-        this.maxTime.setDate(this.maxTime.getDate() + 7);
-        this.maxLength = Math.max(this.upperData.length, this.lowerData.length)
+    setData(data){
+        this.data = data;
+        this.data.forEach(element => {element.costo_total = parseFloat(element.costo_total)});
+        this.maxTime = d3.max(this.data, d => d.fecha);
+        this.minTime = d3.min(this.data, d => d.fecha);
     }
 
+    filter(minTime, maxTime,variable, groupby){//minTime, maxTime, 
+        this.maxTime = maxTime
+        this.minTime = minTime
+        this.variable = variable;
+        this.groupby = groupby;
 
+        this.data_filtered = this.data.filter(function(d) {
+            return d.fecha.getTime() >= minTime && d.fecha.getTime() <= maxTime;
+        });
+   
+        this.maxVariable = d3.max(this.data_filtered, d => d[this.variable]);
+        this.minVariable = d3.min(this.data_filtered, d => d[this.variable]);
+
+        this.data_filtered = d3.nest()
+            .key(function(d) { return d.planta;})
+            .rollup(function(d) {
+                var datos = d.map(function(g) { return {costo:g.costo_total,fecha:g.fecha}})
+                datos.sort(function(a,b){return new Date(b.fecha) - new Date(a.fecha);});
+                return datos;
+            })
+            .entries(this.data_filtered);
+    }
+
+    draw(){
+        this.w = this.width - (this.margins.left + this.margins.right);
+        this.h = this.height - (this.margins.top + this.margins.bottom);
+        this.svgLC = d3.select(this.DOMElement)
+            .append("svg")
+            .attr("width", this.width)
+            .attr("height", this.height)
+            .append("g")
+            .attr("transform","translate(" + this.margins.left + "," + this.margins.top + ")");
+        this.gYAxis = this.svgLC.append("g")
+        this.gXAxis = this.svgLC.append("g")
+            .attr("transform", "translate(0," + this.h + ")");
+        this.update();
+    }
+
+    update(){
+        //var div = d3.select(".tooltip-hm")
+        var div = d3.select(".tooltip-lc")
+        //var series = d3.map(this.data_filtered, function(d){return d.planta;}).keys();
+        console.log(this.minTime,this.maxTime)
+
+        var x = d3.scaleTime()
+            .range([0, this.width])
+            .domain([this.minTime,this.maxTime])
+        var y = d3.scaleLinear()
+            .domain([this.minVariable, this.maxVariable])
+            .range([this.h, 0]);
+        const line = d3.line()
+            .x(function(d) { return x(d.fecha) })
+            .y(function(d) { return y(d.costo) }) 
+        this.gYAxis.call(d3.axisLeft(y));
+        this.gXAxis.call(d3.axisBottom(x));
+
+        var updateCell = this.svgLC.selectAll(".ect")
+            .data(this.data_filtered)
+        updateCell.exit()
+            .remove();
+        updateCell.enter()
+            .append("path")
+            .style("stroke", "salmon")
+            .style("fill", "none")
+            .attr("class","ect")
+            .merge(updateCell)
+            .attr("d", d => line(d.value))
+    }
 }
-
-///////////////////////////////////////////////////////////////////////
-    //////////////////// Draw STack Bar //////////////////////////////////
-    /////////////////////////////////////////////////////////////////////
-    // List of subgroups = header of the csv files = soil condition here
-    https://bl.ocks.org/d3noob/bdf28027e0ce70bd132edc64f1dd7ea4
-
-    /*var vCostoMaxStack = 0;
-    var escalaCostoStack = d3.scaleLinear()
-        .domain([0, vCostoMaxStack]) // unit: $
-        .range([0, 100]); // unit: pixels
-    /*var dataStack_Costos = [];
-    costos_X_dia.forEach(function (d) {
-        row = {};
-        row.group = d.key;
-        row.value = escalaCostoStack(+d.value || 0);
-        arreglo.push(row);
-    });
-    dataStack_Costos.push(arreglo);
-    console.log(costos_X_dia);
-    console.log("====================================================");
-    console.log("dataStack_Costos");
-    console.log(dataStack_Costos);
-    console.log("====================================================");*/
-    var marginStack = { top: 20, right: 20, bottom: 30, left: 40 },
-        widthStack = 960 - marginStack.left - marginStack.right,
-        heightStack = 500 - marginStack.top - marginStack.bottom;
-
-    // set the ranges
-    var xStack = d3.scaleBand()
-        .range([0, widthStack])
-        .padding(0.1);
-    var yStack = d3.scaleLinear()
-        .range([heightStack, 0]);
-
-    // append the svg object to the body of the page
-    // append a 'group' element to 'svg'
-    // moves the 'group' element to the top left margin
-    svgStacked = d3.select("#stackbars").append("svg")
-        .attr("width", widthStack + marginStack.left + marginStack.right)
-        .attr("height", heightStack + marginStack.top + marginStack.bottom)
-        .append("g")
-        .attr("transform",
-            "translate(" + marginStack.left + "," + marginStack.top + ")");
-
-    // get the data
-    // Scale the range of the data in the domains
-    xStack.domain(costos_X_dia.map(function (d) { return new Date(d.key).getMonth(); }));
-    yStack.domain([0, d3.max(costos_X_dia, function (d) { return d.value; })]);
-
-    // append the rectangles for the bar chart
-    svgStacked.selectAll(".bar")
-        .data(costos_X_dia)
-        .exit()//
-        .remove()//
-        .enter().append("rect")
-        .merge(svgStacked)//
-        .attr("class", "bar")
-        .attr("x", function (d) { return xStack(new Date(d.key).getMonth()); })
-        .attr("width", xStack.bandwidth())
-        .attr("y", function (d) { return yStack(d.value); })
-        .attr("height", function (d) { return height - yStack(d.value); });
-
-    // add the x Axis
-    svgStacked.append("g")
-        .attr("transform", "translate(0," + height + ")")
-        .call(d3.axisBottom(xStack));
-
-    // add the y Axis
-    svgStacked.append("g")
-        .call(d3.axisLeft(yStack));

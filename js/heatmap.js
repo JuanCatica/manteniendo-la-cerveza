@@ -91,6 +91,6 @@ class HeatMap{
                 div.transition()		
                 .duration(500)		
                 .style("opacity", 0);
-            })
+            });
     }
 }

@@ -2,17 +2,20 @@ dataCostTime = null;
 dataCost = null;
 dataRisk = null;
 datosRadar = null;
+
 timeS = null;
+lineChartCostos = null;
 heatMap = null;
 
 $(document).ready(function(){   
     var w = document.getElementById('sliderTimeFilter').clientWidth;
     timeS = new TimeSlider("#sliderTimeFilter", w, 150, {top:25,right:10,bottom:50,left:10});
+    lineChartCostos = new LineChart("#lineChartCostos",w, 300, {top:25,right:200,bottom:50,left:200})
     heatMap = new HeatMap("#heatmap", w, 350, {top:25,right:10,bottom:50,left:50});
     
     d3.queue()
         .defer(d3.csv, "dbprocessed/ct-general.csv")
-        .defer(d3.json, "dbprocessed/risks_test.json") //_test
+        .defer(d3.csv, "dbprocessed/random_risk_test.csv") //_test
         .defer(d3.csv, "radar/data/datos_radar.csv")
         .await(function(error, data_cost_time, data_risk, datos_radar) {
             if (error) throw error;
@@ -44,6 +47,9 @@ $(document).ready(function(){
                 }
             });
             timeS.setData(dataCostTimeSlider);
+            dataCostTime.forEach(function(d) { d.fecha = tParser(d.fecha);});
+            lineChartCostos.setData(dataCostTime);
+            //lineChartCostos.filter( "costo_total", "planta")
             
             /** LINE/BAR_CHART : TIME-&-COST */
 
@@ -56,11 +62,11 @@ $(document).ready(function(){
 
             /** VISUALIZACION */
              // revisar la entrada de estos tiempos, incorporar como filtros 
-            timeS.draw();
-
+            timeS.draw();            
+            lineChartCostos.draw();
             //heatMap.setDataFull(dataRisk);
-            heatMap.setData(dataRisk);
-            heatMap.draw();
+            //heatMap.setData(dataRisk);
+            //heatMap.draw();
         });
 
     document.addEventListener("sliderEvent",function(e) {
@@ -68,9 +74,11 @@ $(document).ready(function(){
 
 
         /** HEATMAP */
-        heatMap.filter(e.detail.startDate, e.detail.endDate);
-        heatMap.update();
+        //heatMap.filter(e.detail.startDate, e.detail.endDate);
+        //heatMap.update();
 
+        lineChartCostos.filter(e.detail.startDate, e.detail.endDate, "costo_total", "planta")
+        lineChartCostos.update();
         /** RADAR */
         //dibujarRadar(e.detail.startDate, e.detail.endDate, datosRadar);
     },false);
