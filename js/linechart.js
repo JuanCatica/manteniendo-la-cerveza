@@ -1,4 +1,6 @@
 class LineChart{
+    //https://bl.ocks.org/LemoNode/a9dc1a454fdc80ff2a738a9990935e9d
+    //https://observablehq.com/@d3/multi-line-chart
 
     constructor(DOMElement, width, height, margins) {
         this.DOMElement = DOMElement;
@@ -23,15 +25,12 @@ class LineChart{
         this.minTime = d3.min(this.data, d => d.fecha);
     }
 
-    filter(minTime, maxTime,variable, groupby){//minTime, maxTime, 
+    filter(minTime, maxTime, variable, groupby){ 
         this.maxTime = maxTime
         this.minTime = minTime
         this.variable = variable;
         this.groupby = groupby;
-
-        this.data_filtered = this.data.filter(function(d) {
-            return d.fecha.getTime() >= minTime && d.fecha.getTime() <= maxTime;
-        });
+        this.data_filtered = this.data.filter(d => d.fecha.getTime() >= minTime && d.fecha.getTime() <= maxTime);
    
         this.maxVariable = d3.max(this.data_filtered, d => d[this.variable]);
         this.minVariable = d3.min(this.data_filtered, d => d[this.variable]);
@@ -65,7 +64,6 @@ class LineChart{
         //var div = d3.select(".tooltip-hm")
         var div = d3.select(".tooltip-lc")
         //var series = d3.map(this.data_filtered, function(d){return d.planta;}).keys();
-        console.log(this.minTime,this.maxTime)
 
         var x = d3.scaleTime()
             .range([0, this.width])
@@ -79,7 +77,7 @@ class LineChart{
         this.gYAxis.call(d3.axisLeft(y));
         this.gXAxis.call(d3.axisBottom(x));
 
-        var updateCell = this.svgLC.selectAll(".ect")
+        var updateCell = this.svgLC.selectAll(".line")
             .data(this.data_filtered)
         updateCell.exit()
             .remove();
@@ -87,7 +85,7 @@ class LineChart{
             .append("path")
             .style("stroke", "salmon")
             .style("fill", "none")
-            .attr("class","ect")
+            .attr("class","line")
             .merge(updateCell)
             .attr("d", d => line(d.value))
     }

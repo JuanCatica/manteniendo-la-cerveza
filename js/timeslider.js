@@ -75,6 +75,7 @@ class TimeSlider {
             .attr("y", this.h/2)
             .attr("width", this.w/(this.data.length ))
             .attr("height", (d) => yu(d.up))
+            .attr('stroke', '#2378ae')
             .style("opacity", 0.8)
             .style("fill", "#74a0b9")//salmon #39789c
             .exit().remove();
@@ -89,6 +90,7 @@ class TimeSlider {
             .attr("y", (d) => this.h/2 - yl(d.down))
             .attr("width", this.w/(this.data.length ))
             .attr("height",(d) => yl(d.down))
+            .attr('stroke', '#2378ae')
             .style("opacity", 0.8)
             .style("fill", "#9ccdc1")//.style('stroke',"#9ccdc1") // #69b3a2
             .exit().remove();
@@ -216,8 +218,8 @@ class TimeSlider {
                 }
             } 
 
-            startDate = xb.invert(xl1);
-            endDate = xb.invert(xr0);
+            startDate = xb.invert(bruchX1);
+            endDate = xb.invert(bruchX2);
             
             d3.select(".left-label-text")
                 .attr("x", xl0+ 8)

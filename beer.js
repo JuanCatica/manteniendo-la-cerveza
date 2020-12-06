@@ -6,11 +6,12 @@ datosRadar = null;
 timeS = null;
 lineChartCostos = null;
 heatMap = null;
+tParser = d3.timeParse("%Y-%m-%d");
 
 $(document).ready(function(){   
     var w = document.getElementById('sliderTimeFilter').clientWidth;
     timeS = new TimeSlider("#sliderTimeFilter", w, 150, {top:25,right:10,bottom:50,left:10});
-    lineChartCostos = new LineChart("#lineChartCostos",w, 300, {top:25,right:200,bottom:50,left:200})
+    lineChartCostos = new LineChart("#lineChartCostos",w, 300, {top:25,right:10,bottom:50,left:10})
     heatMap = new HeatMap("#heatmap", w, 350, {top:25,right:10,bottom:50,left:50});
     
     d3.queue()
@@ -20,13 +21,14 @@ $(document).ready(function(){
         .await(function(error, data_cost_time, data_risk, datos_radar) {
             if (error) throw error;
             dataCostTime = data_cost_time;
+            dataCostTime.forEach(function(d) { d.fecha = tParser(d.fecha);});
             
             dataRisk = data_risk;
             datosRadar = datos_radar;
 
             /** PROCESAMIENTO DE DATOS */
             /** SLIDER : TIME-&-COST */
-            let tParser = d3.timeParse("%Y-%m-%d");
+
             dataCostTimeSlider = d3.nest()
                 .key(function(d) { return d.fecha;})
                 .rollup(function(d) {
@@ -35,19 +37,22 @@ $(document).ready(function(){
                         down : d3.sum(d, (g) => g["costo_total"]),
                     }})
                 .entries(dataCostTime);
+                
             dataCostTimeSlider = dataCostTimeSlider.map(function(d) {
-                var date0 = new Date(tParser(d.key));
+                var date0 = new Date(d.key);
                 var date1 = new Date(date0);
                 date1.setDate(date1.getDate() + 7);
                 return {
-                    "date0" : date0,
-                    "date1" : date1,   
-                    "up" : d.value.up,
-                    "down" : d.value.down,
+                    date0 : date0,
+                    date1 : date1,   
+                    up : d.value.up,
+                    down : d.value.down,
                 }
             });
+            console.log(dataCostTimeSlider)
             timeS.setData(dataCostTimeSlider);
-            dataCostTime.forEach(function(d) { d.fecha = tParser(d.fecha);});
+            
+            //dataCostTime.forEach(function(d) { d.fecha = tParser(d.fecha);});
             lineChartCostos.setData(dataCostTime);
             //lineChartCostos.filter( "costo_total", "planta")
             
@@ -72,7 +77,6 @@ $(document).ready(function(){
     document.addEventListener("sliderEvent",function(e) {
         /** LINECHART */
 
-
         /** HEATMAP */
         //heatMap.filter(e.detail.startDate, e.detail.endDate);
         //heatMap.update();
@@ -83,8 +87,6 @@ $(document).ready(function(){
         //dibujarRadar(e.detail.startDate, e.detail.endDate, datosRadar);
     },false);
 });
-
-
 
 $(window).resize(function(){
     //timeS.reSize(window.innerWidth, null, null);
