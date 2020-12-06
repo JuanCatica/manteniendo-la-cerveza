@@ -1,9 +1,3 @@
-/**
- * @HARDCODED VARIABLES
- * costo
- * fecha
- * costo_total
- */
 class TimeChart{
     //https://bl.ocks.org/LemoNode/a9dc1a454fdc80ff2a738a9990935e9d
     //https://observablehq.com/@d3/multi-line-chart
