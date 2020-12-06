@@ -4,6 +4,7 @@
     /////////////////////////////////////////////////////////////////////
     // List of subgroups = header of the csv files = soil condition here
     https://bl.ocks.org/d3noob/bdf28027e0ce70bd132edc64f1dd7ea4
+    //https://observablehq.com/@d3/bar-chart-race-explained
 
     /*var vCostoMaxStack = 0;
     var escalaCostoStack = d3.scaleLinear()

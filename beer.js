@@ -3,15 +3,17 @@ dataCost = null;
 dataRisk = null;
 datosRadar = null;
 
-timeS = null;
-lineChartCostos = null;
+timeSlider = null;
+timeChartCostos = null;
+timeChartTiempos = null;
 heatMap = null;
 tParser = d3.timeParse("%Y-%m-%d");
 
 $(document).ready(function(){   
     var w = document.getElementById('sliderTimeFilter').clientWidth;
-    timeS = new TimeSlider("#sliderTimeFilter", w, 150, {top:25,right:10,bottom:50,left:10});
-    lineChartCostos = new LineChart("#lineChartCostos",w, 300, {top:25,right:10,bottom:50,left:10})
+    timeSlider = new TimeSlider("#sliderTimeFilter", w, 150, {top:25,right:10,bottom:50,left:10});
+    timeChartCostos = new TimeChart("#timeChartCostos",w, 300, {top:25,right:10,bottom:50,left:100})
+    timeChartTiempos = new TimeChart("#timeChartTiempos",w, 300, {top:25,right:10,bottom:50,left:100})
     heatMap = new HeatMap("#heatmap", w, 350, {top:25,right:10,bottom:50,left:50});
     
     d3.queue()
@@ -21,7 +23,11 @@ $(document).ready(function(){
         .await(function(error, data_cost_time, data_risk, datos_radar) {
             if (error) throw error;
             dataCostTime = data_cost_time;
-            dataCostTime.forEach(function(d) { d.fecha = tParser(d.fecha);});
+            dataCostTime.forEach(function(d) { 
+                d.fecha = tParser(d.fecha);
+                d.costo_total = parseFloat(d.costo_total)
+                d.trabajo_real = parseFloat(d.trabajo_real)
+            });
             
             dataRisk = data_risk;
             datosRadar = datos_radar;
@@ -50,11 +56,10 @@ $(document).ready(function(){
                 }
             });
             
-            timeS.setData(dataCostTimeSlider);
-            
-            //dataCostTime.forEach(function(d) { d.fecha = tParser(d.fecha);});
-            lineChartCostos.setData(dataCostTime);
-            //lineChartCostos.filter( "costo_total", "planta")
+            timeSlider.setData(dataCostTimeSlider);
+            timeChartCostos.setData(dataCostTime, "costo_total", "fecha", "tipo_aviso");
+            timeChartTiempos.setData(dataCostTime, "trabajo_real", "fecha", "tipo_aviso");
+            //timeChartCostos.filter( "costo_total", "planta")
             
             /** LINE/BAR_CHART : TIME-&-COST */
 
@@ -67,8 +72,9 @@ $(document).ready(function(){
 
             /** VISUALIZACION */
              // revisar la entrada de estos tiempos, incorporar como filtros 
-            timeS.draw();            
-            lineChartCostos.draw();
+            timeSlider.draw();            
+            timeChartCostos.draw();
+            timeChartTiempos.draw();
             //heatMap.setDataFull(dataRisk);
             //heatMap.setData(dataRisk);
             //heatMap.draw();
@@ -81,8 +87,11 @@ $(document).ready(function(){
         //heatMap.filter(e.detail.startDate, e.detail.endDate);
         //heatMap.update();
 
-        lineChartCostos.filter(e.detail.startDate, e.detail.endDate, "costo_total", "planta")
-        lineChartCostos.update();
+        timeChartCostos.filter(e.detail.startDate, e.detail.endDate);
+        timeChartTiempos.filter(e.detail.startDate, e.detail.endDate);
+
+        timeChartCostos.update();
+        timeChartTiempos.update();
         /** RADAR */
         //dibujarRadar(e.detail.startDate, e.detail.endDate, datosRadar);
     },false);
@@ -98,6 +107,6 @@ function doUpdateViz(){
 
     maxTime = Math.max(dataTime[dataTime.length - 1].key, dataCost[dataCost.length - 1].key);
     minTime = Math.min(dataTime[0].key, dataCost[0].key);
-    timeS.setData(dataTime, dataCost, minTime, maxTime);
-    timeS.update();
+    timeSlider.setData(dataTime, dataCost, minTime, maxTime);
+    timeSlider.update();
 }

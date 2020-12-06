@@ -4,7 +4,7 @@
  * fecha
  * costo_total
  */
-class LineChart{
+class TimeChart{
     //https://bl.ocks.org/LemoNode/a9dc1a454fdc80ff2a738a9990935e9d
     //https://observablehq.com/@d3/multi-line-chart
 
@@ -24,29 +24,25 @@ class LineChart{
             .style("border-radius", "3px");
     }
 
-    setData(data){
-        this.data = data;
-        this.data.forEach(element => {element.costo_total = parseFloat(element.costo_total)});
-        this.maxTime = d3.max(this.data, d => d.fecha);
-        this.minTime = d3.min(this.data, d => d.fecha);
-
-        this.dviz = d3.nest()
-            .key(function(d) { return d.planta;})
-            .key(function(d) { return d.fecha;})
-            .rollup(function(d) {
-                return d3.sum(d, (d) => d.costo_total)
-            })
-            .entries(this.data);
+    setData(data, field, time, serie){
+        this.data = data.map((d) => ({field: d[field], time: d[time], serie: d[serie]}));
+        this.maxTime = d3.max(this.data, d => d.time);
+        this.minTime = d3.min(this.data, d => d.time);
         
+        this.dviz = d3.nest()
+            .key((d) => d.serie)
+            .key((d) => d.time)
+            .rollup((d) => d3.sum(d, (d) => d.field))
+            .entries(this.data);
+              
         this.dviz.forEach((d) => d.values.forEach(function(g) { g.key = new Date(g.key);}))
         this.dviz.forEach((d) => d.values.sort(function(a,b){return b.key - a.key}))
+        this.filter(this.minTime, this.maxTime)
     }
 
-    filter(minTime, maxTime, variable, groupby){ 
+    filter(minTime, maxTime){ 
         this.maxTime = maxTime
         this.minTime = minTime
-        this.variable = variable;
-        this.groupby = groupby;
 
         this.dvizFiltered = this.dviz.map(function(dSeries) { 
             let filteredSerie = dSeries.values.filter(d => d.key.getTime() >= minTime && d.key.getTime() <= maxTime)

@@ -1,4 +1,5 @@
 class TimeSlider {
+    //http://square.github.io/crossfilter/
     //https://observablehq.com/@bumbeishvili/data-driven-range-sliders#barRangeSlider
     //https://observablehq.com/d/c55a5839a5bb7c73
     //https://stackoverflow.com/questions/9671995/javascript-custom-event-listener
@@ -23,12 +24,6 @@ class TimeSlider {
         this.data.sort(function(a,b){return new Date(a[date0]) - new Date(b[date0]);});
         this.minTime = data[0][date0]
         this.maxTime = data[data.length - 1][date1]
-
-        console.log(this.minTime)
-        console.log(this.maxTime)
-
-        console.log(typeof this.minTime)
-        console.log(typeof this.maxTime)
     }
 
     draw(){
@@ -144,8 +139,8 @@ class TimeSlider {
         this.svgBar.call(
             d3.brushX()
                 .extent([[0, 0], [this.w, this.h]])
-                .on("start", console.log("start"))
-                .on("end", console.log("end"))
+                //.on("start", console.log("start"))
+                //.on("end", console.log("end"))
                 .on("brush", brush)
         );
         
@@ -205,13 +200,13 @@ class TimeSlider {
                 .attr("y", h)
                 .attr("width", labelW)
                 .attr("height", lableH);
-            
+
             if(startDate && endDate){
                 if (xb.invert(xl1).getTime() != startDate.getTime() || xb.invert(xr0).getTime() != endDate.getTime()){
                     var event = new CustomEvent("sliderEvent", {
                         detail: {
-                            startDate: startDate,
-                            endDate: endDate
+                            startDate: xb.invert(bruchX1),
+                            endDate: xb.invert(bruchX2)
                         }
                     });
                     document.dispatchEvent(event);
@@ -220,7 +215,7 @@ class TimeSlider {
 
             startDate = xb.invert(bruchX1);
             endDate = xb.invert(bruchX2);
-            
+
             d3.select(".left-label-text")
                 .attr("x", xl0+ 8)
                 .attr("y", h + lableH - 4)
