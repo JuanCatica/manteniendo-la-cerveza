@@ -49,7 +49,7 @@ $(document).ready(function(){
                     down : d.value.down,
                 }
             });
-            console.log(dataCostTimeSlider)
+            
             timeS.setData(dataCostTimeSlider);
             
             //dataCostTime.forEach(function(d) { d.fecha = tParser(d.fecha);});

@@ -1,3 +1,9 @@
+/**
+ * @HARDCODED VARIABLES
+ * costo
+ * fecha
+ * costo_total
+ */
 class LineChart{
     //https://bl.ocks.org/LemoNode/a9dc1a454fdc80ff2a738a9990935e9d
     //https://observablehq.com/@d3/multi-line-chart
@@ -10,12 +16,12 @@ class LineChart{
         this.margins = margins;
 
         d3.select("body").append("div")	
-        .attr("class", "tooltip-hm")
-        .style("opacity", 0)
-        .style("position", "absolute")
-        .style("text-align", "center")
-        .style("background", "lightsteelblue")
-        .style("border-radius", "3px");
+            .attr("class", "tooltip-hm")
+            .style("opacity", 0)
+            .style("position", "absolute")
+            .style("text-align", "center")
+            .style("background", "lightsteelblue")
+            .style("border-radius", "3px");
     }
 
     setData(data){
@@ -23,6 +29,17 @@ class LineChart{
         this.data.forEach(element => {element.costo_total = parseFloat(element.costo_total)});
         this.maxTime = d3.max(this.data, d => d.fecha);
         this.minTime = d3.min(this.data, d => d.fecha);
+
+        this.dviz = d3.nest()
+            .key(function(d) { return d.planta;})
+            .key(function(d) { return d.fecha;})
+            .rollup(function(d) {
+                return d3.sum(d, (d) => d.costo_total)
+            })
+            .entries(this.data);
+        
+        this.dviz.forEach((d) => d.values.forEach(function(g) { g.key = new Date(g.key);}))
+        this.dviz.forEach((d) => d.values.sort(function(a,b){return b.key - a.key}))
     }
 
     filter(minTime, maxTime, variable, groupby){ 
@@ -30,19 +47,19 @@ class LineChart{
         this.minTime = minTime
         this.variable = variable;
         this.groupby = groupby;
-        this.data_filtered = this.data.filter(d => d.fecha.getTime() >= minTime && d.fecha.getTime() <= maxTime);
-   
-        this.maxVariable = d3.max(this.data_filtered, d => d[this.variable]);
-        this.minVariable = d3.min(this.data_filtered, d => d[this.variable]);
 
-        this.data_filtered = d3.nest()
-            .key(function(d) { return d.planta;})
-            .rollup(function(d) {
-                var datos = d.map(function(g) { return {costo:g.costo_total,fecha:g.fecha}})
-                datos.sort(function(a,b){return new Date(b.fecha) - new Date(a.fecha);});
-                return datos;
-            })
-            .entries(this.data_filtered);
+        this.dvizFiltered = this.dviz.map(function(dSeries) { 
+            let filteredSerie = dSeries.values.filter(d => d.key.getTime() >= minTime && d.key.getTime() <= maxTime)
+            return {
+                key : dSeries.key,
+                value : filteredSerie,
+                max : d3.max(filteredSerie, d => d.value),
+                min : d3.min(filteredSerie, d => d.value)
+            }
+        });
+        
+        this.maxVariable = d3.max(this.dvizFiltered, d => d.max);
+        this.minVariable = d3.min(this.dvizFiltered, d => d.min);
     }
 
     draw(){
@@ -63,7 +80,6 @@ class LineChart{
     update(){
         //var div = d3.select(".tooltip-hm")
         var div = d3.select(".tooltip-lc")
-        //var series = d3.map(this.data_filtered, function(d){return d.planta;}).keys();
 
         var x = d3.scaleTime()
             .range([0, this.width])
@@ -71,19 +87,24 @@ class LineChart{
         var y = d3.scaleLinear()
             .domain([this.minVariable, this.maxVariable])
             .range([this.h, 0]);
+
+        var s = d3.scaleOrdinal()
+            .domain(d3.map(this.dvizFiltered, function(d){return d.key;}).keys())
+            .range(d3.schemeCategory10)
+
         const line = d3.line()
-            .x(function(d) { return x(d.fecha) })
-            .y(function(d) { return y(d.costo) }) 
+            .x(function(d) { return x(d.key) })
+            .y(function(d) { return y(d.value) }) 
         this.gYAxis.call(d3.axisLeft(y));
         this.gXAxis.call(d3.axisBottom(x));
 
         var updateCell = this.svgLC.selectAll(".line")
-            .data(this.data_filtered)
+            .data(this.dvizFiltered)
         updateCell.exit()
             .remove();
         updateCell.enter()
             .append("path")
-            .style("stroke", "salmon")
+            .style("stroke", d => s(d.key))
             .style("fill", "none")
             .attr("class","line")
             .merge(updateCell)
