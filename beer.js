@@ -6,15 +6,25 @@ datosRadar = null;
 timeSlider = null;
 timeChartCostos = null;
 timeChartTiempos = null;
+donutChartCostos = null;
+donutChartTiempos = null;
 heatMap = null;
 tParser = d3.timeParse("%Y-%m-%d");
 
 $(document).ready(function(){   
     var w = document.getElementById('sliderTimeFilter').clientWidth;
-    timeSlider = new TimeSlider("#sliderTimeFilter", w, 150, {top:25,right:10,bottom:50,left:10});
-    timeChartCostos = new TimeChart("#timeChartCostos",w, 300, {top:25,right:10,bottom:50,left:100})
-    timeChartTiempos = new TimeChart("#timeChartTiempos",w, 300, {top:25,right:10,bottom:50,left:100})
-    heatMap = new HeatMap("#heatmap", w, 350, {top:25,right:10,bottom:50,left:50});
+    timeSlider = new TimeSlider("#sliderTimeFilter", w, 150, {top:25,right:20,bottom:50,left:20});
+    
+    var w1 = document.getElementById('timeChartCostos').clientWidth;
+    var w2 = document.getElementById('timeChartTiempos').clientWidth;
+    var w3 = document.getElementById('donutChartCostos').clientWidth;
+    var w4 = document.getElementById('donutChartTiempos').clientWidth;
+    var w5 = document.getElementById('heatmap').clientWidth;
+    timeChartCostos = new TimeChart("#timeChartCostos",w1, 200, {top:25,right:20,bottom:20,left:100})
+    timeChartTiempos = new TimeChart("#timeChartTiempos",w2, 200, {top:25,right:20,bottom:20,left:100})
+    donutChartCostos = new DonutChart("#donutChartCostos",w3, 200, {top:0,right:10,bottom:20,left:100})
+    donutChartTiempos = new DonutChart("#donutChartTiempos",w4, 200, {top:0,right:10,bottom:20,left:100})
+    heatMap = new HeatMap("#heatmap", w5, 350, {top:25,right:20,bottom:20,left:100});
     
     d3.queue()
         .defer(d3.csv, "dbprocessed/ct-general.csv")
@@ -34,7 +44,6 @@ $(document).ready(function(){
 
             /** PROCESAMIENTO DE DATOS */
             /** SLIDER : TIME-&-COST */
-
             dataCostTimeSlider = d3.nest()
                 .key(function(d) { return d.fecha;})
                 .rollup(function(d) {
@@ -55,43 +64,45 @@ $(document).ready(function(){
                     down : d.value.down,
                 }
             });
-            
-            timeSlider.setData(dataCostTimeSlider);
-            timeChartCostos.setData(dataCostTime, "costo_total", "fecha", "tipo_aviso");
-            timeChartTiempos.setData(dataCostTime, "trabajo_real", "fecha", "tipo_aviso");
-            //timeChartCostos.filter( "costo_total", "planta")
-            
-            /** LINE/BAR_CHART : TIME-&-COST */
 
+            /** LINE/BAR_CHART : TIME-&-COST */
             /* RISK DATA */
             dataRisk.forEach(function(d) { d.fecha = tParser(d.fecha);});
             dataRisk = dataRisk.filter(function(d) {return d.fecha.getYear() == 118;});
             dataRisk.sort(function(a,b){return new Date(b.fecha) - new Date(a.fecha);});
             var maxRisk = dataRisk[dataRisk.length - 1].fecha
             var minRisk = dataRisk[0].fecha
+            
+            timeSlider.setData(dataCostTimeSlider);
+            timeChartCostos.setData(dataCostTime, "costo_total", "fecha", "tipo_aviso");
+            timeChartTiempos.setData(dataCostTime, "trabajo_real", "fecha", "tipo_aviso");
+            donutChartCostos.setData(dataCostTime, "costo_total", "fecha", "tipo_aviso");
+            donutChartTiempos.setData(dataCostTime, "trabajo_real", "fecha", "tipo_aviso");
+            heatMap.setData(dataRisk);
+            heatMap.filter(donutChartTiempos.minTime, donutChartTiempos.maxTime);
 
             /** VISUALIZACION */
              // revisar la entrada de estos tiempos, incorporar como filtros 
             timeSlider.draw();            
             timeChartCostos.draw();
             timeChartTiempos.draw();
-            //heatMap.setDataFull(dataRisk);
-            //heatMap.setData(dataRisk);
-            //heatMap.draw();
+            donutChartCostos.draw();
+            donutChartTiempos.draw();
+            heatMap.draw();
         });
 
-    document.addEventListener("sliderEvent",function(e) {
-        /** LINECHART */
-
-        /** HEATMAP */
-        //heatMap.filter(e.detail.startDate, e.detail.endDate);
-        //heatMap.update();
-
+    document.addEventListener("sliderEvent",function(e) {    
         timeChartCostos.filter(e.detail.startDate, e.detail.endDate);
         timeChartTiempos.filter(e.detail.startDate, e.detail.endDate);
+        donutChartCostos.filter(e.detail.startDate, e.detail.endDate);
+        donutChartTiempos.filter(e.detail.startDate, e.detail.endDate);
+        heatMap.filter(e.detail.startDate, e.detail.endDate);
 
         timeChartCostos.update();
         timeChartTiempos.update();
+        donutChartCostos.update();
+        donutChartTiempos.update();
+        heatMap.update();
         /** RADAR */
         //dibujarRadar(e.detail.startDate, e.detail.endDate, datosRadar);
     },false);

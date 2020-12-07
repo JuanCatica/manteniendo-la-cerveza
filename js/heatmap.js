@@ -21,12 +21,14 @@ class HeatMap{
      */
     setData(data){
         this.data = data;
+        this.maxTime = d3.max(this.data, d => d.time);
+        this.minTime = d3.min(this.data, d => d.time);
     }
 
     filter(minTime, maxTime){
-        this.data_filtered = this.data.filter(function(d) {return d.fecha.getTime() >= minTime && d.fecha.getTime() <= maxTime;});
         this.maxTime = maxTime;
         this.minTime = minTime;
+        this.data_filtered = this.data.filter(function(d) {return d.fecha.getTime() >= minTime && d.fecha.getTime() <= maxTime;});
     }
 
     draw(){

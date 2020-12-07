@@ -1,4 +1,4 @@
-class TimeChart{
+class DonutChart{
     //https://bl.ocks.org/LemoNode/a9dc1a454fdc80ff2a738a9990935e9d
     //https://observablehq.com/@d3/multi-line-chart
 
@@ -16,6 +16,8 @@ class TimeChart{
             .style("text-align", "center")
             .style("background", "lightsteelblue")
             .style("border-radius", "3px");
+
+        this.radius = Math.min(width, height) / 2 - 10;
     }
 
     setData(data, field, time, serie){
@@ -29,41 +31,36 @@ class TimeChart{
             .rollup((d) => d3.sum(d, (d) => d.field))
             .entries(this.data);
               
-        this.dviz.forEach((d) => d.values.forEach(function(g) { g.key = new Date(g.key);}))
-        this.dviz.forEach((d) => d.values.sort(function(a,b){return b.key - a.key}))
-        this.filter(this.minTime, this.maxTime)
+        this.dviz.forEach((d) => d.values.forEach(function(g) { g.key = new Date(g.key);}));
+        this.dviz.forEach((d) => d.values.sort(function(a,b){return b.key - a.key}));
+        this.filter(this.minTime, this.maxTime);
     }
 
     filter(minTime, maxTime){ 
         this.maxTime = maxTime
         this.minTime = minTime
-
-        this.dvizFiltered = this.dviz.map(function(dSeries) { 
+        this.dvizFiltered = {}
+        
+        let dataDics = this.dviz.map(function(dSeries) { 
             let filteredSerie = dSeries.values.filter(d => d.key.getTime() >= minTime && d.key.getTime() <= maxTime)
             return {
                 key : dSeries.key,
-                value : filteredSerie,
-                max : d3.max(filteredSerie, d => d.value),
-                min : d3.min(filteredSerie, d => d.value)
+                value : d3.sum(filteredSerie, (d) => d.value)
             }
         });
-        
-        this.maxVariable = d3.max(this.dvizFiltered, d => d.max);
-        this.minVariable = d3.min(this.dvizFiltered, d => d.min);
+        dataDics.forEach((d) => this.dvizFiltered[d.key]=d.value)
     }
 
     draw(){
         this.w = this.width - (this.margins.left + this.margins.right);
         this.h = this.height - (this.margins.top + this.margins.bottom);
-        this.svgLC = d3.select(this.DOMElement)
+        this.svgDC = d3.select(this.DOMElement)
             .append("svg")
             .attr("width", this.width)
             .attr("height", this.height)
             .append("g")
-            .attr("transform","translate(" + this.margins.left + "," + this.margins.top + ")"); //+ this.margins.left + "," + this.margins.top +
-        this.gYAxis = this.svgLC.append("g")
-        this.gXAxis = this.svgLC.append("g")
-            .attr("transform", "translate(0," + this.h + ")");
+            .attr("transform", "translate(" + this.width / 2 + "," + this.height / 2 + ")");
+        
         this.update();
     }
 
@@ -71,37 +68,21 @@ class TimeChart{
         //var div = d3.select(".tooltip-hm")
         var div = d3.select(".tooltip-lc")
 
-        var x = d3.scaleTime()
-            .range([0, this.w])
-            .domain([this.minTime,this.maxTime])
-        var y = d3.scaleLinear()
-            .domain([this.minVariable, this.maxVariable])
-            .range([this.h, 0]);
-        this.gYAxis.call(d3.axisLeft(y));
-        this.gXAxis.call(d3.axisBottom(x));
-
         var s = d3.scaleOrdinal()
             .domain(d3.map(this.dvizFiltered, function(d){return d.key;}).keys())
-            .range(d3.schemeCategory10)
+            .range(d3.schemeCategory10);
+        var pie = d3.pie()
+            .value(function(d) {return d.value;});
 
-        const line = d3.line()  
-            .x(function(d) { return x(d.key) })
-            .y(function(d) { return y(d.value) })
-            .curve(d3.curveBasis);
-
-        var updateCell = this.svgLC.selectAll(".line")
-            .data(this.dvizFiltered)
+        var updateCell = this.svgDC.selectAll(".donut")
+            .data(pie(d3.entries(this.dvizFiltered)))
         updateCell.exit()
             .remove();
         updateCell.enter()
             .append("path")
-            .style("mix-blend-mode", "multiply")
-            .style("fill", "none")
-            .style("stroke", "steelblue")
-            .style("stroke-width", "1.5px")
-            .attr("class","line")
+            .style("fill", d => s(d.data.key))
+            .attr("class","donut")
             .merge(updateCell)
-            .style("stroke", d => s(d.key))
-            .attr("d", d => line(d.value))
+            .attr('d', d3.arc().innerRadius(70).outerRadius(this.radius));
     }
 }
