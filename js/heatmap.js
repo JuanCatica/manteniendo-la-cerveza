@@ -48,8 +48,10 @@ class HeatMap{
 
     update(){
         var div = d3.select(".tooltip-hm")
-        var equipos = d3.map(this.data_filtered, function(d){return d.id_equipo;}).keys();
+        var equipos = d3.map(this.data_filtered, function(d){return d.id_equipo;}).keys()
+        var num_equipos = equipos.length
 
+        
         var x = d3.scaleTime()
             .range([0, this.width])
             .domain([this.minTime,this.maxTime])
@@ -62,7 +64,6 @@ class HeatMap{
             .domain([0,1])
         this.gYAxis.call(d3.axisLeft(y));
         this.gXAxis.call(d3.axisBottom(x));
-
         var updateCell = this.svgHM.selectAll(".risk-rect")
             .data(this.data_filtered)
         updateCell.exit()
@@ -73,7 +74,7 @@ class HeatMap{
             .merge(updateCell)
             .attr("x", (d) => x(d.fecha))
             .attr("y", (d) => y(d.id_equipo))
-            .attr("width", this.w/(this.data_filtered.length/16 ))
+            .attr("width", this.w/(this.data_filtered.length/num_equipos))
             .attr("height", y.bandwidth() )
             .style("fill", (d) => z(d.risk))
             .style("opacity", 0.8)   

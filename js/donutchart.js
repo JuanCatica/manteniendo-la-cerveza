@@ -10,14 +10,15 @@ class DonutChart{
         this.margins = margins;
 
         d3.select("body").append("div")	
-            .attr("class", "tooltip-hm")
+            .attr("class", "tooltip-donut")
             .style("opacity", 0)
             .style("position", "absolute")
             .style("text-align", "center")
             .style("background", "lightsteelblue")
             .style("border-radius", "3px");
 
-        this.radius = Math.min(width, height) / 2 - 10;
+        this.radius = Math.min(width, height) / 2;
+        this.radius = 0.95*this.radius
     }
 
     setData(data, field, time, serie){
@@ -65,8 +66,7 @@ class DonutChart{
     }
 
     update(){
-        //var div = d3.select(".tooltip-hm")
-        var div = d3.select(".tooltip-lc")
+        var div = d3.select(".tooltip-donut")
 
         var s = d3.scaleOrdinal()
             .domain(d3.map(this.dvizFiltered, function(d){return d.key;}).keys())
@@ -74,15 +74,32 @@ class DonutChart{
         var pie = d3.pie()
             .value(function(d) {return d.value;});
 
-        var updateCell = this.svgDC.selectAll(".donut")
+        var updateArea = this.svgDC.selectAll(".donut")
             .data(pie(d3.entries(this.dvizFiltered)))
-        updateCell.exit()
+        updateArea.exit()
             .remove();
-        updateCell.enter()
+        updateArea.enter()
             .append("path")
             .style("fill", d => s(d.data.key))
             .attr("class","donut")
-            .merge(updateCell)
-            .attr('d', d3.arc().innerRadius(70).outerRadius(this.radius));
+            .merge(updateArea)
+            .attr('d', d3.arc().innerRadius(70).outerRadius(this.radius))
+            .on("mouseover", function(d){
+                d3.selectAll("path.donut").style("opacity", .9)
+                d3.select(this)
+                  .style("opacity", 1);   
+                div.transition()		
+                    .duration(200)		
+                    .style("opacity", 0.9);		
+                div.html(d.data.key + " : " + d.data.value)	
+                    .style("left", (d3.event.pageX) + 40 + "px")		
+                    .style("top", (d3.event.pageY) + "px");
+            })
+            .on("mouseout", function(d){  
+                d3.selectAll("path.donut").style("opacity", 1)
+                div.transition()		
+                .duration(500)		
+                .style("opacity", 0);
+            });
     }
 }

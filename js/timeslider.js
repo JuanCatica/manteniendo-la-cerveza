@@ -7,8 +7,6 @@ class TimeSlider {
 
     constructor(DOMElement, width, height, margins) {
         this.DOMElement = DOMElement;
-        this.upperData = null;
-        this.lowerData = null;
         this.width = width;
         this.height = height;
         this.margins = margins;
@@ -67,10 +65,10 @@ class TimeSlider {
             .attr("class","upper-rect")
             .merge(updateUpBar)
             .attr("x", (d) => xb(d.date0))
-            .attr("y", this.h/2)
+            .attr("y", (d) => this.h/2 - yu(d.up))
             .attr("width", this.w/(this.data.length ))
             .attr("height", (d) => yu(d.up))
-            .attr('stroke', '#2378ae')
+            .attr('stroke', 'white')
             .style("opacity", 0.8)
             .style("fill", "#74a0b9")//salmon #39789c
             .exit().remove();
@@ -82,10 +80,10 @@ class TimeSlider {
             .attr("class","lower-rect")
             .merge(updateDownBar)
             .attr("x", (d) => xb(d.date0))
-            .attr("y", (d) => this.h/2 - yl(d.down))
+            .attr("y", this.h/2)
             .attr("width", this.w/(this.data.length ))
             .attr("height",(d) => yl(d.down))
-            .attr('stroke', '#2378ae')
+            .attr('stroke', 'white') //#2378ae
             .style("opacity", 0.8)
             .style("fill", "#9ccdc1")//.style('stroke',"#9ccdc1") // #69b3a2
             .exit().remove();

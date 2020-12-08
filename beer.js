@@ -13,7 +13,7 @@ tParser = d3.timeParse("%Y-%m-%d");
 
 $(document).ready(function(){   
     var w = document.getElementById('sliderTimeFilter').clientWidth;
-    timeSlider = new TimeSlider("#sliderTimeFilter", w, 150, {top:25,right:20,bottom:50,left:20});
+    timeSlider = new TimeSlider("#sliderTimeFilter", w, 150, {top:25,right:20,bottom:25,left:20});
     
     var w1 = document.getElementById('timeChartCostos').clientWidth;
     var w2 = document.getElementById('timeChartTiempos').clientWidth;
@@ -48,8 +48,8 @@ $(document).ready(function(){
                 .key(function(d) { return d.fecha;})
                 .rollup(function(d) {
                     return {
-                        up : d3.sum(d, (g) => g["trabajo_real"]),
-                        down : d3.sum(d, (g) => g["costo_total"]),
+                        up : d3.sum(d, (g) => g.costo_total),
+                        down : d3.sum(d, (g) => g.trabajo_real),
                     }})
                 .entries(dataCostTime);
                 
@@ -68,7 +68,7 @@ $(document).ready(function(){
             /** LINE/BAR_CHART : TIME-&-COST */
             /* RISK DATA */
             dataRisk.forEach(function(d) { d.fecha = tParser(d.fecha);});
-            dataRisk = dataRisk.filter(function(d) {return d.fecha.getYear() == 118;});
+            //dataRisk = dataRisk.filter(function(d) {return d.fecha.getYear() == 118;});
             dataRisk.sort(function(a,b){return new Date(b.fecha) - new Date(a.fecha);});
             var maxRisk = dataRisk[dataRisk.length - 1].fecha
             var minRisk = dataRisk[0].fecha
@@ -104,7 +104,7 @@ $(document).ready(function(){
         donutChartTiempos.update();
         heatMap.update();
         /** RADAR */
-        //dibujarRadar(e.detail.startDate, e.detail.endDate, datosRadar);
+        //dibujarRadar(e.detail.startDate, e.detail.endDate, datosRadar, "EQ10603");
     },false);
 });
 
@@ -118,6 +118,6 @@ function doUpdateViz(){
 
     maxTime = Math.max(dataTime[dataTime.length - 1].key, dataCost[dataCost.length - 1].key);
     minTime = Math.min(dataTime[0].key, dataCost[0].key);
-    timeSlider.setData(dataTime, dataCost, minTime, maxTime);
+    //timeSlider.setData(dataCost, dataTime, minTime, maxTime);
     timeSlider.update();
 }

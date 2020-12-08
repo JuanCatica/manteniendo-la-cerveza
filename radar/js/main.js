@@ -5,7 +5,7 @@ var tmpFechaFinal = "";
 
 var svgStacked= null;
 
-function dibujarRadar(fechaInicial, fechaFinal, data) {
+function dibujarRadar(fechaInicial, fechaFinal, data, equipo_id) {
     if (fechaInicial == tmpFechaFinal || fechaFinal == tmpFechaFinal) {
         return false;
     } else {
@@ -34,8 +34,8 @@ function dibujarRadar(fechaInicial, fechaFinal, data) {
     //EQ10603
     //Equipos con valores por encima del promedio
     //EQ10012
-    var vIdEquipo = document.getElementById("sel_id_equipo").value;
-    console.log(vIdEquipo);
+    var vIdEquipo = equipo_id //document.getElementById("sel_id_equipo").value;
+    console.log("Equipo:",vIdEquipo);
     datosFiltradosEq = data.filter(function (d) { return d.id_equipo == vIdEquipo && tParser(d.fecha_aviso.substring(0, 10)).getTime() >= fechaInicial.getTime() && tParser(d.fecha_aviso.substring(0, 10)).getTime() <= fechaFinal.getTime() })
     var vTipoEquipo = datosFiltradosEq[0].tipo_equipo;
     console.log(vTipoEquipo);
