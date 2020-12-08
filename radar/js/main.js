@@ -6,13 +6,13 @@ var tmpFechaFinal = "";
 var svgStacked= null;
 
 function dibujarRadar(fechaInicial, fechaFinal, data, equipo_id) {
-    if (fechaInicial == tmpFechaFinal || fechaFinal == tmpFechaFinal) {
-        return false;
-    } else {
+   //if (fechaInicial == tmpFechaFinal || fechaFinal == tmpFechaFinal) {
+   //    return false;
+   //} else {
         console.log("Llamado a funcion dibujarRadar!");
         tmpFechaFinal = fechaFinal;
         tmpFechaInicial = fechaInicial;
-    }
+    //å}
     console.log("Llamado a funcion dibujarRadar");
 
     var margin = { top: 100, right: 100, bottom: 100, left: 100 },

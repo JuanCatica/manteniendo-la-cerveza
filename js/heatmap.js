@@ -94,6 +94,18 @@ class HeatMap{
                 div.transition()		
                 .duration(500)		
                 .style("opacity", 0);
+            })
+            .on("click", function(d){  
+                var event = new CustomEvent("heatMapEvent", {
+                    detail: {
+                        idEquipo: d.id_equipo
+                    }
+                });
+                document.dispatchEvent(event);
             });
+
+
+
+
     }
 }

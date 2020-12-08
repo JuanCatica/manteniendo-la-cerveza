@@ -55,14 +55,14 @@
         </nav>
         <div class="container-fluid h-100 pl-0 pr-0 text-white ">
             <div class="container-fluid pl-10 pr-10 h-100">
-                <div id="mainFilter" class="container-fluid row m-1">
+                <!--<div id="mainFilter" class="container-fluid row m-1">
                     <button id="update-button-a" class="col-2 bg-white form-control" onClick="doUpdateViz()">Planta A</button>
                     <button id="update-button-b" class="col-2 bg-white form-control" onClick="doUpdateViz()">Planta B</button>
                     <button id="update-button-c" class="col-2 bg-white form-control" onClick="doUpdateViz()">Planta C</button>
                     <button id="update-button-d" class="col-2 bg-white form-control" onClick="doUpdateViz()">Planta D</button>
                     <button id="update-button-e" class="col-2 bg-white form-control" onClick="doUpdateViz()">Planta E</button>
                     <button id="update-button-f" class="col-2 bg-white form-control" onClick="doUpdateViz()">Planta F</button>
-                </div>
+                </div>-->
                 <div id="sliderTimeFilter" class="row"></div>
                 <div class="container-fluid">
                     <div class="input-group p-1">
@@ -83,21 +83,19 @@
                         <button class="riesgo form-control p-2 text-white" disabled><b>RISK (%)</b></button>
                     </div>
                     <div class="row">
-                        <div id="radarChartHoras" class="col-6"></div>
-                        <div id="radarChartCosto" class="col-6"></div>
-                    </div>
-                    <div class="row">
                         <div class="col-2">
-                        <div class="input-group p-1">
-                            <button id="maxRisk" class="riesgo form-control p-2 text-white " disabled><b>RISK (%)</b></button>
-                        </div>
-                        <div class="input-group p-1">
-                            <button id="minRisk" class="riesgo form-control p-2 text-white " disabled><b>RISK (%)</b></button>
-                        </div>
-                            <!--<div id="maxRisk" class="row"></div>-->
-                            <!--<<div id="minRisk" class="row"></div>-->
+                            <div class="input-group p-1">
+                                <button id="maxRisk" class="riesgo form-control p-2 text-white " disabled><b>RISK (%)</b></button>
+                            </div>
+                            <div class="input-group p-1">
+                                <button id="minRisk" class="riesgo form-control p-2 text-white " disabled><b>RISK (%)</b></button>
+                            </div>
                         </div>
                         <div id="heatmap" class="col-10"></div>
+                    </div>
+                    <div class="row">
+                        <div id="radarChartHoras" class="col-6"></div>
+                        <div id="radarChartCosto" class="col-6"></div>
                     </div>
                     <div id="stackbars"></div>
                     <div id="my_dataviz"></div>

@@ -11,6 +11,11 @@ donutChartTiempos = null;
 heatMap = null;
 lableMaxRisk = null;
 lableMinRisk = null;
+
+idEquipoSelected = null;
+mintime = null;
+maxtime = null;
+
 tParser = d3.timeParse("%Y-%m-%d");
 
 $(document).ready(function(){   
@@ -28,9 +33,10 @@ $(document).ready(function(){
     timeChartTiempos = new TimeChart("#timeChartTiempos",w2, 200, {top:25,right:20,bottom:20,left:100})
     donutChartCostos = new DonutChart("#donutChartCostos",w3, 200, {top:0,right:10,bottom:20,left:100})
     donutChartTiempos = new DonutChart("#donutChartTiempos",w4, 200, {top:0,right:10,bottom:20,left:100})
-    heatMap = new HeatMap("#heatmap", w5, 360, {top:25,right:20,bottom:20,left:100});
-    $("#maxRisk").css("width", w6).css("height", 180).text("Máximo: 82.34%").css("font-size", "30px").css("background-color", "red");
-    $("#minRisk").css("width", w7).css("height", 180).text("Míximo: 22.34%").css("font-size", "30px").css("background-color", "green");
+    heatMap = new HeatMap("#heatmap", w5, 500, {top:25,right:20,bottom:20,left:100});
+    
+    $("#maxRisk").css("width", w6).css("height", 250).text("Máximo: 82.34%").css("font-size", "30px").css("background-color", "red");
+    $("#minRisk").css("width", w7).css("height", 250).text("Míximo: 22.34%").css("font-size", "30px").css("background-color", "green");
     
     d3.queue()
         .defer(d3.csv, "dbprocessed/ct-general.csv")
@@ -100,7 +106,9 @@ $(document).ready(function(){
             heatMap.draw();
         });
 
-    document.addEventListener("sliderEvent",function(e) {    
+    document.addEventListener("sliderEvent",function(e) { 
+        mintime = e.detail.startDate;
+        maxtime = e.detail.endDate
         timeChartCostos.filter(e.detail.startDate, e.detail.endDate);
         timeChartTiempos.filter(e.detail.startDate, e.detail.endDate);
         donutChartCostos.filter(e.detail.startDate, e.detail.endDate);
@@ -113,7 +121,14 @@ $(document).ready(function(){
         donutChartTiempos.update();
         heatMap.update();
         /** RADAR */
-        //dibujarRadar(e.detail.startDate, e.detail.endDate, datosRadar, "EQ10603");
+        if (idEquipoSelected!= null && mintime!=null && maxtime!=null)
+            dibujarRadar(mintime, maxtime, datosRadar, idEquipoSelected);
+    },false);
+
+    document.addEventListener("heatMapEvent",function(e) {   
+        console.log(mintime, maxtime, e.detail.idEquipo)
+        idEquipoSelected = e.detail.idEquipo
+        dibujarRadar(mintime, maxtime, datosRadar, idEquipoSelected);
     },false);
 });
 
