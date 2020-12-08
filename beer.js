@@ -35,8 +35,8 @@ $(document).ready(function(){
     donutChartTiempos = new DonutChart("#donutChartTiempos",w4, 200, {top:0,right:10,bottom:20,left:100})
     heatMap = new HeatMap("#heatmap", w5, 500, {top:25,right:20,bottom:20,left:100});
     
-    $("#maxRisk").css("width", w6).css("height", 250).text("Máximo: 82.34%").css("font-size", "30px").css("background-color", "red");
-    $("#minRisk").css("width", w7).css("height", 250).text("Míximo: 22.34%").css("font-size", "30px").css("background-color", "green");
+    $("#maxRisk").text("Máximo: 82.34%").css("background-color", "red");//.css("width", w6).css("height", 250).css("font-size", "30px")
+    $("#minRisk").text("Mínimo: 22.34%").css("background-color", "green");//.css("width", w7).css("height", 250).css("font-size", "30px")
     
     d3.queue()
         .defer(d3.csv, "dbprocessed/ct-general.csv")
@@ -93,6 +93,8 @@ $(document).ready(function(){
             heatMap.setData(dataRisk);
 
             heatMap.filter(donutChartTiempos.minTime, donutChartTiempos.maxTime);
+            mintime=donutChartTiempos.minTime 
+            maxtime=donutChartTiempos.maxTime
 
             /** VISUALIZACION */
              // revisar la entrada de estos tiempos, incorporar como filtros 

@@ -49,9 +49,8 @@ class HeatMap{
     update(){
         var div = d3.select(".tooltip-hm")
         var equipos = d3.map(this.data_filtered, function(d){return d.id_equipo;}).keys()
-        var num_equipos = equipos.length
+        var num_equipos = equipos.length;
 
-        
         var x = d3.scaleTime()
             .range([0, this.width])
             .domain([this.minTime,this.maxTime])
@@ -60,7 +59,7 @@ class HeatMap{
             .domain(equipos)
             .padding(0.01);
         var z = d3.scaleLinear()
-            .range(["green", "red"])
+            .range(["green", "red"]) //["#9ccdc1", "yellow", "salmon"]
             .domain([0,1])
         this.gYAxis.call(d3.axisLeft(y));
         this.gXAxis.call(d3.axisBottom(x));

@@ -150,8 +150,8 @@ function dibujarRadar(fechaInicial, fechaFinal, data, equipo_id) {
     ////////////////////////////////////////////////////////////// 
     //var color = d3.scale.ordinal()
     //    .range(["#EDC951", "#CC333F", "#00A0B0"]);
-    var colorHoras = d3.scaleOrdinal().range(["#EDC951", "#CC333F", "#00A0B0"]);
-    var colorCostos = d3.scaleOrdinal().range(["#EDC951", "#CC333F", "#00A0B0"]);
+    var colorCostos = d3.scaleOrdinal().range(["#74a0b9", "#EDC951", "#00A0B0"]);
+    var colorHoras = d3.scaleOrdinal().range(["#9ccdc1", "#EDC951", "#00A0B0"]);
 
     var radarChartOptionsHoras = {
         w: vWidth,

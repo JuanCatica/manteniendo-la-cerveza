@@ -83,19 +83,21 @@
                         <button class="riesgo form-control p-2 text-white" disabled><b>RISK (%)</b></button>
                     </div>
                     <div class="row">
-                        <div class="col-2">
-                            <div class="input-group p-1">
-                                <button id="maxRisk" class="riesgo form-control p-2 text-white " disabled><b>RISK (%)</b></button>
+                        <div class="input-group p-1">
+                            <div class="col-6 ">
+                                    <button id="maxRisk" class="riesgo form-control text-white " disabled><b>RISK (%)</b></button>
                             </div>
-                            <div class="input-group p-1">
-                                <button id="minRisk" class="riesgo form-control p-2 text-white " disabled><b>RISK (%)</b></button>
+                            <div class="col-6 ">
+                                    <button id="minRisk" class="riesgo form-control text-white " disabled><b>RISK (%)</b></button>
                             </div>
                         </div>
-                        <div id="heatmap" class="col-10"></div>
                     </div>
                     <div class="row">
-                        <div id="radarChartHoras" class="col-6"></div>
-                        <div id="radarChartCosto" class="col-6"></div>
+                        <div class="col-2">
+                            <div id="radarChartCosto" class="row"></div>
+                            <div id="radarChartHoras" class="row"></div>
+                        </div>
+                        <div id="heatmap" class="col-10"></div>
                     </div>
                     <div id="stackbars"></div>
                     <div id="my_dataviz"></div>
