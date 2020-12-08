@@ -34,90 +34,28 @@
     </head>
 
     <body>
-        <div class="container-fluid h-100 pl-0 pr-0 text-white">
-            <nav class="navbar navbar-expand-lg navbar-light">
-                <div class="container-fluid">
-
-                    <button type="submit" data-toggle="tooltip" data-placement="bottom" title=""
-                        style="background-color:transparent; border-color:transparent;">
-                        <img src="static/img/beer.png" height="25" />
-                        <a class="navbar-brand text-white" href="">Manteniendola</a>
-                    </button>
-
-
-                    <ul class="nav">
-                        <li class="nav-item">
-                            <form method="get" action="">
-                                <button type="submit" data-toggle="tooltip" data-placement="bottom" title=""
-                                    style="background-color:transparent; border-color:transparent;">
-                                    <small class="text-white">Historia</small>
-                                </button>
-                            </form>
-                        </li>
-                    </ul>
-                </div>
-            </nav>
+        <nav class="navbar fixed-top navbar-default">
+            <div class="container-fluid">
+                <button type="submit" data-toggle="tooltip" data-placement="bottom" title=""
+                    style="background-color:transparent; border-color:transparent;">
+                    <img src="static/img/beer.png" height="25" />
+                    <a class="navbar-brand text-white" href="">Manteniendola</a>
+                </button>
+                <ul class="nav">
+                    <li class="nav-item">
+                        <form method="get" action="">
+                            <button type="submit" data-toggle="tooltip" data-placement="bottom" title=""
+                                style="background-color:transparent; border-color:transparent;">
+                                <small class="text-white">Historia</small>
+                            </button>
+                        </form>
+                    </li>
+                </ul>
+            </div>
+        </nav>
+        <div class="container-fluid h-100 pl-0 pr-0 text-white ">
             <div class="container-fluid pl-10 pr-10 h-100">
-                <!--<div class="col-2">
-                    <div class="input-group text-center">
-                        <button id="update-button" class="border-success form-control m-1 text-success" data-toggle="modal"
-                            data-target="#editModal">Time</button>
-                    </div>
-
-                    <div class="hr">
-                        <hr>
-                    </div>
-
-                    <div class="input-group p-1">
-                        <button id="update-button" class="bg-white form-control p-2" onClick="doUpdateViz()">Planta A</button>
-                    </div>
-                    <div class="input-group p-1">
-                        <button id="update-button" class="bg-white form-control p-2" onClick="doUpdateViz()">Planta B</button>
-                    </div>
-                    <div class="input-group p-1">
-                        <button id="update-button" class="bg-white form-control p-2" onClick="doUpdateViz()">Planta C</button>
-                    </div>
-                    <div class="input-group p-1">
-                        <button id="update-button" class="bg-white form-control p-2" onClick="doUpdateViz()">Planta D</button>
-                    </div>
-                    <div class="input-group p-1">
-                        <button id="update-button" class="bg-white form-control p-2" onClick="doUpdateViz()">Planta E</button>
-                    </div>
-
-                    <div class="hr"><hr></div>
-
-                    <div class="input-group p-1">
-                        <button id="update-button" class="bg-white form-control p-2" onClick="doUpdateViz()">AREA 1</button>
-                    </div>
-                    <div class="input-group p-1">
-                        <button id="update-button" class="bg-white form-control p-2" onClick="doUpdateViz()">AREA 2</button>
-                    </div>
-                    <div class="input-group p-1">
-                        <button id="update-button" class="bg-white form-control p-2" onClick="doUpdateViz()">AREA 3</button>
-                    </div>
-                    <div class="input-group p-1">
-                        <button id="update-button" class="bg-white form-control p-2" onClick="doUpdateViz()">AREA 4</button>
-                    </div>
-                    <div class="input-group p-1">
-                        <button id="update-button" class="bg-white form-control p-2" onClick="doUpdateViz()">AREA 5</button>
-                    </div>
-
-                    <div class="hr">
-                        <hr>
-                    </div>
-
-                    <div class="input-group p-1">
-                        <select class="bg-white form-control p-2" id="sel_id_equipo" name="tipo_equipo">
-                            <option value="EQ10603" selected>EQ10603</option>
-                            <option value="EQ11089">EQ11089</option>
-                            <option value="EQ10012">EQ10012</option>
-                            <option value="EQ10045">EQ10045</option>
-                            <option value="EQ11735">EQ11735</option>
-                        </select>
-                    </div>
-                </div>-->
-            <!--<div class="col-10">-->
-                <div id="mainFilter" class="container-fluid row m-2">
+                <div id="mainFilter" class="container-fluid row m-1">
                     <button id="update-button-a" class="col-2 bg-white form-control" onClick="doUpdateViz()">Planta A</button>
                     <button id="update-button-b" class="col-2 bg-white form-control" onClick="doUpdateViz()">Planta B</button>
                     <button id="update-button-c" class="col-2 bg-white form-control" onClick="doUpdateViz()">Planta C</button>
@@ -126,95 +64,51 @@
                     <button id="update-button-f" class="col-2 bg-white form-control" onClick="doUpdateViz()">Planta F</button>
                 </div>
                 <div id="sliderTimeFilter" class="row"></div>
-                <div class="input-group p-1">
-                    <button class="costo form-control p-2 text-white" disabled><b>COST ($)</b></button>
-                </div>
-                <div class="row">
-                    <div id="donutChartCostos" class="col-2"></div>
-                    <div id="timeChartCostos" class="col-10"></div>
-                </div>
-                <div class="tiempo input-group p-1">
-                    <button class="tiempo form-control p-2 text-white" disabled><b>TIME (hrs)</b></button>
-                </div>
-                <div class="row">
-                    <div id="donutChartTiempos" class="col-2"></div>
-                    <div id="timeChartTiempos" class="col-10"></div>
-                </div>
-                <div class="input-group p-1">
-                    <button class="riesgo form-control p-2 text-white" disabled><b>RISK (%)</b></button>
-                </div>
-                <div class="row">
-                    <div id="radarChartHoras" class="col-6"></div>
-                    <div id="radarChartCosto" class="col-6"></div>
-                </div>
-                <div class="row">
-                    <div class="col-2">
-                        <span class="label label-primary">Primary Label</span>
-                        <h1>Example</h1>
+                <div class="container-fluid">
+                    <div class="input-group p-1">
+                        <button class="costo form-control p-2 text-white" disabled><b>COST ($)</b></button>
                     </div>
-                    <div id="heatmap" class="col-10"></div>
-                </div>
-                <div id="stackbars"></div>
-                <div id="my_dataviz"></div>
-            </div>
-            <!--</div>-->
-        </div>
-        <!--Modal para la definición del rango de tiempo-->
-        <div class="modal fade " id="editModal" tabindex="1" role="dialog" aria-labelledby="editModal" aria-hidden="true">
-            <div class="modal-dialog" role="document">
-                <div class="modal-content">
-
-                    <div class="modal-header">
-                        <h5 class="modal-title" id="editModal">Rango de Tiempo</h5>
-                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                            <span aria-hidden="true">&times;</span>
-                        </button>
+                    <div class="row">
+                        <div id="donutChartCostos" class="col-2"></div>
+                        <div id="timeChartCostos" class="col-10"></div>
                     </div>
-                    <div class="modal-body">
-                        <div class="input-group mb-1">
-                            <div style="width:20%" class="input-group-prepend"><span style="width:100%"
-                                    class="input-group-text" id="inputGroup-sizing-default">Inicio</span></div>
-                            <input type='text' autocomplete="off" name="start_date" class="form-control"
-                                id='datetimepicker1' required>
-                        </div>
-                        <div class="input-group mb-1">
-                            <div style="width:20%" class="input-group-prepend"><span style="width:100%"
-                                    class="input-group-text" id="inputGroup-sizing-default">Fin</span></div>
-                            <input type='text' autocomplete="off" name="end_date" class="form-control" id='datetimepicker2'
-                                required>
-                        </div>
-
-                        <div class="modal-footer">
-                            <button type="submit" class="btn text-secondary" data-toggle="modal" data-dismiss="modal"
-                                data-target="#deleteModal" data-whatever="@getbootstrap">Cancelar</button>
-                            <form action="">
-                                <input type="hidden" name="id_contest" value="">
-                                <button type="submit" class="btn text-success">Listo</button>
-                            </form>
-                        </div>
+                    <div class="tiempo input-group p-1">
+                        <button class="tiempo form-control p-2 text-white" disabled><b>TIME (hrs)</b></button>
                     </div>
+                    <div class="row">
+                        <div id="donutChartTiempos" class="col-2"></div>
+                        <div id="timeChartTiempos" class="col-10"></div>
+                    </div>
+                    <div class="input-group p-1">
+                        <button class="riesgo form-control p-2 text-white" disabled><b>RISK (%)</b></button>
+                    </div>
+                    <div class="row">
+                        <div id="radarChartHoras" class="col-6"></div>
+                        <div id="radarChartCosto" class="col-6"></div>
+                    </div>
+                    <div class="row">
+                        <div class="col-2">
+                        <div class="input-group p-1">
+                            <button id="maxRisk" class="riesgo form-control p-2 text-white " disabled><b>RISK (%)</b></button>
+                        </div>
+                        <div class="input-group p-1">
+                            <button id="minRisk" class="riesgo form-control p-2 text-white " disabled><b>RISK (%)</b></button>
+                        </div>
+                            <!--<div id="maxRisk" class="row"></div>-->
+                            <!--<<div id="minRisk" class="row"></div>-->
+                        </div>
+                        <div id="heatmap" class="col-10"></div>
+                    </div>
+                    <div id="stackbars"></div>
+                    <div id="my_dataviz"></div>
                 </div>
             </div>
         </div>
-        <script type="text/javascript">
-            // Material Select Initialization
-            $(function () {
-                $('#datetimepicker1').datetimepicker({
-                    format: 'YYYY-MM-DD',
-                });
-            });
-        </script>
-        <script type="text/javascript">
-            $(function () {
-                $('#datetimepicker2').datetimepicker({
-                    format: 'YYYY-MM-DD',
-                });
-            });
-        </script>
         <script src="beer.js"></script>
         <script src="js/timeslider.js"></script>
         <script src="js/donutchart.js"></script>
         <script src="js/timechart.js"></script>
+        <script src="js/labelchart.js"></script>
         <script src="js/heatmap.js"></script>
         
         <script src="radar/js/main.js"></script>
@@ -238,6 +132,9 @@
             .riesgo.form-control.p-2{
                 background-color: salmon;
             }
+            body { padding-top: 70px; }
+
+          
         </style>
     </body>
 </html>

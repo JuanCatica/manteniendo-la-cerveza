@@ -9,6 +9,8 @@ timeChartTiempos = null;
 donutChartCostos = null;
 donutChartTiempos = null;
 heatMap = null;
+lableMaxRisk = null;
+lableMinRisk = null;
 tParser = d3.timeParse("%Y-%m-%d");
 
 $(document).ready(function(){   
@@ -20,11 +22,15 @@ $(document).ready(function(){
     var w3 = document.getElementById('donutChartCostos').clientWidth;
     var w4 = document.getElementById('donutChartTiempos').clientWidth;
     var w5 = document.getElementById('heatmap').clientWidth;
+    var w6 = document.getElementById('maxRisk').clientWidth;
+    var w7 = document.getElementById('minRisk').clientWidth;
     timeChartCostos = new TimeChart("#timeChartCostos",w1, 200, {top:25,right:20,bottom:20,left:100})
     timeChartTiempos = new TimeChart("#timeChartTiempos",w2, 200, {top:25,right:20,bottom:20,left:100})
     donutChartCostos = new DonutChart("#donutChartCostos",w3, 200, {top:0,right:10,bottom:20,left:100})
     donutChartTiempos = new DonutChart("#donutChartTiempos",w4, 200, {top:0,right:10,bottom:20,left:100})
-    heatMap = new HeatMap("#heatmap", w5, 350, {top:25,right:20,bottom:20,left:100});
+    heatMap = new HeatMap("#heatmap", w5, 360, {top:25,right:20,bottom:20,left:100});
+    $("#maxRisk").css("width", w6).css("height", 180).text("Máximo: 82.34%").css("font-size", "30px").css("background-color", "red");
+    $("#minRisk").css("width", w7).css("height", 180).text("Míximo: 22.34%").css("font-size", "30px").css("background-color", "green");
     
     d3.queue()
         .defer(d3.csv, "dbprocessed/ct-general.csv")
@@ -79,6 +85,7 @@ $(document).ready(function(){
             donutChartCostos.setData(dataCostTime, "costo_total", "fecha", "tipo_aviso");
             donutChartTiempos.setData(dataCostTime, "trabajo_real", "fecha", "tipo_aviso");
             heatMap.setData(dataRisk);
+
             heatMap.filter(donutChartTiempos.minTime, donutChartTiempos.maxTime);
 
             /** VISUALIZACION */
@@ -88,6 +95,8 @@ $(document).ready(function(){
             timeChartTiempos.draw();
             donutChartCostos.draw();
             donutChartTiempos.draw();
+            //lableMaxRisk.draw();
+            //lableMinRisk.draw();
             heatMap.draw();
         });
 
@@ -96,7 +105,7 @@ $(document).ready(function(){
         timeChartTiempos.filter(e.detail.startDate, e.detail.endDate);
         donutChartCostos.filter(e.detail.startDate, e.detail.endDate);
         donutChartTiempos.filter(e.detail.startDate, e.detail.endDate);
-        heatMap.filter(e.detail.startDate, e.detail.endDate);
+        heatMap.filter(timeChartCostos.minTime, timeChartCostos.maxTime);
 
         timeChartCostos.update();
         timeChartTiempos.update();
