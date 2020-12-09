@@ -88,7 +88,7 @@ class HeatMap{
                 div.transition()		
                     .duration(200)		
                     .style("opacity", 0.9);		
-                div.html("Risk: " + Math.round(d.risk*10000)/100 + "%" )	
+                div.html("Risk of " + d.id_equipo + " : " + Math.round(d.risk*10000)/100 + "%" )	
                     .style("left", (d3.event.pageX) + 40 + "px")		
                     .style("top", (d3.event.pageY) + "px");
             })
