@@ -31,12 +31,12 @@ $(document).ready(function(){
     var w7 = document.getElementById('minRisk').clientWidth;
     timeChartCostos = new TimeChart("#timeChartCostos",w1, 200, {top:25,right:20,bottom:20,left:100})
     timeChartTiempos = new TimeChart("#timeChartTiempos",w2, 200, {top:25,right:20,bottom:20,left:100})
-    donutChartCostos = new DonutChart("#donutChartCostos",w3, 200, {top:0,right:10,bottom:20,left:100})
-    donutChartTiempos = new DonutChart("#donutChartTiempos",w4, 200, {top:0,right:10,bottom:20,left:100})
+    donutChartCostos = new DonutChart("#donutChartCostos",w3, 200, {top:0,right:10,bottom:20,left:100}, prefix = "$ ")
+    donutChartTiempos = new DonutChart("#donutChartTiempos",w4, 200, {top:0,right:10,bottom:20,left:100}, prefix="", posfix = " hrs")
     heatMap = new HeatMap("#heatmap", w5, 500, {top:25,right:20,bottom:20,left:100});
     
-    $("#maxRisk").text("Máximo: 82.34%").css("background-color", "red");//.css("width", w6).css("height", 250).css("font-size", "30px")
-    $("#minRisk").text("Mínimo: 22.34%").css("background-color", "green");//.css("width", w7).css("height", 250).css("font-size", "30px")
+    $("#maxRisk").text("Máximo: N/A").css("background-color", "red");//.css("width", w6).css("height", 250).css("font-size", "30px")
+    $("#minRisk").text("Mínimo: N/A").css("background-color", "green");//.css("width", w7).css("height", 250).css("font-size", "30px")
     
     d3.queue()
         .defer(d3.csv, "dbprocessed/ct-general.csv")
@@ -79,11 +79,9 @@ $(document).ready(function(){
 
             /** LINE/BAR_CHART : TIME-&-COST */
             /* RISK DATA */
-            dataRisk.forEach(function(d) { d.fecha = tParser(d.fecha);});
+            dataRisk.forEach(function(d) { d.fecha = tParser(d.fecha); d.risk = parseFloat(d.risk);});
             //dataRisk = dataRisk.filter(function(d) {return d.fecha.getYear() == 118;});
             dataRisk.sort(function(a,b){return new Date(b.fecha) - new Date(a.fecha);});
-            var maxRisk = dataRisk[dataRisk.length - 1].fecha
-            var minRisk = dataRisk[0].fecha
             
             timeSlider.setData(dataCostTimeSlider);
             timeChartCostos.setData(dataCostTime, "costo_total", "fecha", "tipo_aviso");
@@ -96,6 +94,9 @@ $(document).ready(function(){
             mintime=donutChartTiempos.minTime 
             maxtime=donutChartTiempos.maxTime
 
+            $("#maxRisk").text("Máximo: " + Math.round(heatMap.maxRisk*10000)/100 + "%")
+            $("#minRisk").text("Mínimo: " + Math.round(heatMap.minRisk*10000)/100 + "%")
+
             /** VISUALIZACION */
              // revisar la entrada de estos tiempos, incorporar como filtros 
             timeSlider.draw();            
@@ -106,6 +107,7 @@ $(document).ready(function(){
             //lableMaxRisk.draw();
             //lableMinRisk.draw();
             heatMap.draw();
+            dibujarRadar(mintime, maxtime, datosRadar, "EQ10064");
         });
 
     document.addEventListener("sliderEvent",function(e) { 
@@ -122,9 +124,13 @@ $(document).ready(function(){
         donutChartCostos.update();
         donutChartTiempos.update();
         heatMap.update();
+
+        $("#maxRisk").text("Máximo: " + Math.round(heatMap.maxRisk*10000)/100 + "%")
+        $("#minRisk").text("Mínimo: " + Math.round(heatMap.minRisk*10000)/100 + "%")
+
         /** RADAR */
         if (idEquipoSelected!= null && mintime!=null && maxtime!=null)
-            dibujarRadar(mintime, maxtime, datosRadar, idEquipoSelected);
+            dibujarRadar(mintime, maxtime, datosRadar, idEquipoSelected); 
     },false);
 
     document.addEventListener("heatMapEvent",function(e) {   

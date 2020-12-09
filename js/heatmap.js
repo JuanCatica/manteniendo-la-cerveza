@@ -23,12 +23,16 @@ class HeatMap{
         this.data = data;
         this.maxTime = d3.max(this.data, d => d.time);
         this.minTime = d3.min(this.data, d => d.time);
+        this.maxRisk = d3.max(this.data, d => d.risk); 
+        this.minRisk = d3.min(this.data, d => d.risk);
     }
 
     filter(minTime, maxTime){
         this.maxTime = maxTime;
         this.minTime = minTime;
         this.data_filtered = this.data.filter(function(d) {return d.fecha.getTime() >= minTime && d.fecha.getTime() <= maxTime;});
+        this.maxRisk = d3.max(this.data_filtered, d => d.risk) 
+        this.minRisk = d3.min(this.data_filtered, d => d.risk)
     }
 
     draw(){
@@ -84,7 +88,7 @@ class HeatMap{
                 div.transition()		
                     .duration(200)		
                     .style("opacity", 0.9);		
-                div.html("Risk: " + d.risk)	
+                div.html("Risk: " + Math.round(d.risk*10000)/100 + "%" )	
                     .style("left", (d3.event.pageX) + 40 + "px")		
                     .style("top", (d3.event.pageY) + "px");
             })
@@ -102,9 +106,5 @@ class HeatMap{
                 });
                 document.dispatchEvent(event);
             });
-
-
-
-
     }
 }

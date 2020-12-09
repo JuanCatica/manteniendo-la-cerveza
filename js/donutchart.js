@@ -2,12 +2,14 @@ class DonutChart{
     //https://bl.ocks.org/LemoNode/a9dc1a454fdc80ff2a738a9990935e9d
     //https://observablehq.com/@d3/multi-line-chart
 
-    constructor(DOMElement, width, height, margins) {
+    constructor(DOMElement, width, height, margins, prefix = "", posfix = "") {
         this.DOMElement = DOMElement;
         this.data = null;
         this.width = width;
         this.height = height;
         this.margins = margins;
+        this.prefix = prefix;
+        this.posfix = posfix;
 
         d3.select("body").append("div")	
             .attr("class", "tooltip-donut")
@@ -67,6 +69,8 @@ class DonutChart{
 
     update(){
         var div = d3.select(".tooltip-donut")
+        var prefix = this.prefix
+        var posfix = this.posfix
 
         var s = d3.scaleOrdinal()
             .domain(d3.map(this.dvizFiltered, function(d){return d.key;}).keys())
@@ -91,7 +95,7 @@ class DonutChart{
                 div.transition()		
                     .duration(200)		
                     .style("opacity", 0.9);		
-                div.html(d.data.key + " : " + d.data.value)	
+                div.html(d.data.key + " : " + prefix + formatMoney(d.data.value) + posfix)	
                     .style("left", (d3.event.pageX) + 40 + "px")		
                     .style("top", (d3.event.pageY) + "px");
             })
@@ -101,5 +105,21 @@ class DonutChart{
                 .duration(500)		
                 .style("opacity", 0);
             });
+
+            function formatMoney(amount, decimalCount = 2, decimal = ".", thousands = ",") {
+                try {
+                  decimalCount = Math.abs(decimalCount);
+                  decimalCount = isNaN(decimalCount) ? 2 : decimalCount;
+              
+                  const negativeSign = amount < 0 ? "-" : "";
+              
+                  let i = parseInt(amount = Math.abs(Number(amount) || 0).toFixed(decimalCount)).toString();
+                  let j = (i.length > 3) ? i.length % 3 : 0;
+              
+                  return negativeSign + (j ? i.substr(0, j) + thousands : '') + i.substr(j).replace(/(\d{3})(?=\d)/g, "$1" + thousands) + (decimalCount ? decimal + Math.abs(amount - i).toFixed(decimalCount).slice(2) : "");
+                } catch (e) {
+                  Logger.log(e)
+                }
+              };
     }
 }
